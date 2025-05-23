@@ -34,37 +34,47 @@ class Ball:
         self.initial_y = y
         
         # Set initial velocity
-        self.reset_velocity()
+        self.velocity_x = 0  # Start with zero velocity
+        self.velocity_y = 0
+        
+        # Game started flag
+        self.game_started = False
     
     def reset(self):
         """Reset the ball to its initial position and randomize velocity."""
         self.x = self.initial_x
         self.y = self.initial_y
-        self.reset_velocity()
+        self.velocity_x = 0
+        self.velocity_y = 0
+        self.game_started = False
     
-    def reset_velocity(self):
-        """Randomize the ball's velocity."""
-        # Random horizontal direction
-        direction = random.choice([-1, 1])
-        
-        # Set velocity
-        self.velocity_x = direction * 5
-        self.velocity_y = random.uniform(-3, 3)
+    def start_movement(self):
+        """Start the ball's movement with a random direction."""
+        if not self.game_started:
+            # Random horizontal direction
+            direction = random.choice([-1, 1])
+            
+            # Set velocity
+            self.velocity_x = direction * 5
+            self.velocity_y = random.uniform(-3, 3)
+            self.game_started = True
     
     def update(self):
         """Update the ball's position."""
-        self.x += self.velocity_x
-        self.y += self.velocity_y
-        
-        # Bounce off the top and bottom walls
-        if self.y - self.radius <= 0 or self.y + self.radius >= SCREEN_HEIGHT:
-            self.velocity_y = -self.velocity_y
+        # Only move if the game has started
+        if self.game_started:
+            self.x += self.velocity_x
+            self.y += self.velocity_y
             
-            # Ensure the ball stays within bounds
-            if self.y - self.radius <= 0:
-                self.y = self.radius
-            elif self.y + self.radius >= SCREEN_HEIGHT:
-                self.y = SCREEN_HEIGHT - self.radius
+            # Bounce off the top and bottom walls
+            if self.y - self.radius <= 0 or self.y + self.radius >= SCREEN_HEIGHT:
+                self.velocity_y = -self.velocity_y
+                
+                # Ensure the ball stays within bounds
+                if self.y - self.radius <= 0:
+                    self.y = self.radius
+                elif self.y + self.radius >= SCREEN_HEIGHT:
+                    self.y = SCREEN_HEIGHT - self.radius
     
     def draw(self, screen):
         """
@@ -149,6 +159,12 @@ class PongLogic:
         self.ball = ball
         self.player_paddle = player_paddle
         self.ai_paddle = ai_paddle
+        self.game_started = False
+    
+    def start_game(self):
+        """Start the game by setting the ball in motion."""
+        self.ball.start_movement()
+        self.game_started = True
     
     def update(self):
         """
@@ -168,12 +184,13 @@ class PongLogic:
         self._check_paddle_collisions()
         
         # Check if the ball went out of bounds
-        if self.ball.x - self.ball.radius <= 0:
-            # AI scored
-            return "ai_scored"
-        elif self.ball.x + self.ball.radius >= SCREEN_WIDTH:
-            # Player scored
-            return "player_scored"
+        if self.ball.game_started:
+            if self.ball.x - self.ball.radius <= 0:
+                # AI scored
+                return "ai_scored"
+            elif self.ball.x + self.ball.radius >= SCREEN_WIDTH:
+                # Player scored
+                return "player_scored"
         
         return None
     

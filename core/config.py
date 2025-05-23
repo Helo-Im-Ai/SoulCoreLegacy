@@ -44,7 +44,41 @@ GAME_LIST = [
         "thumbnail": "pong/assets/thumbnail.png",
         "implemented": True
     },
-    # More games will be added in future phases
+    {
+        "id": "snake",
+        "name": "Snake",
+        "description": "Grow your snake by eating food",
+        "thumbnail": "snake/assets/thumbnail.png",
+        "implemented": True
+    },
+    {
+        "id": "tic_tac_toe",
+        "name": "Tic-Tac-Toe",
+        "description": "Classic X and O game",
+        "thumbnail": "tic_tac_toe/assets/thumbnail.png",
+        "implemented": True
+    },
+    {
+        "id": "photon_racer",
+        "name": "Photon Racer",
+        "description": "Guide a light-ship through a winding tunnel",
+        "thumbnail": "photon_racer/assets/thumbnail.png",
+        "implemented": True
+    },
+    {
+        "id": "breakout",
+        "name": "Breakout",
+        "description": "Break bricks with a bouncing ball",
+        "thumbnail": "breakout/assets/thumbnail.png",
+        "implemented": False
+    },
+    {
+        "id": "space_invaders",
+        "name": "Space Invaders",
+        "description": "Defend Earth from alien invaders",
+        "thumbnail": "space_invaders/assets/thumbnail.png",
+        "implemented": False
+    }
 ]
 
 # Development mode (enables debug features)

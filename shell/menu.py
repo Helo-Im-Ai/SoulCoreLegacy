@@ -7,7 +7,7 @@ This module implements the main menu interface for the arcade.
 import pygame
 from core.config import SCREEN_WIDTH, SCREEN_HEIGHT, BG_COLOR, PRIMARY_COLOR, SECONDARY_COLOR, TEXT_COLOR, GAME_LIST
 from core.asset_loader import load_font, create_gradient_background, create_rounded_rect_image
-from shell.ui_elements import Button, TextLabel
+from shell.ui_elements import Button, TextLabel, GameCard
 
 class ShellMenu:
     """
@@ -24,6 +24,7 @@ class ShellMenu:
         self.game_manager = game_manager
         self.buttons = []
         self.labels = []
+        self.game_cards = []
         
         # Create background
         self.background = create_gradient_background(
@@ -40,7 +41,7 @@ class ShellMenu:
             title_font,
             PRIMARY_COLOR,
             SCREEN_WIDTH // 2,
-            80
+            40
         )
         self.labels.append(title_label)
         
@@ -51,12 +52,12 @@ class ShellMenu:
             subtitle_font,
             SECONDARY_COLOR,
             SCREEN_WIDTH // 2,
-            130
+            100
         )
         self.labels.append(subtitle_label)
         
-        # Create game buttons
-        self._create_game_buttons()
+        # Create game cards
+        self._create_game_cards()
         
         # Create footer text
         footer_font = load_font("Arial", 16)
@@ -69,42 +70,39 @@ class ShellMenu:
         )
         self.labels.append(footer_label)
     
-    def _create_game_buttons(self):
-        """Create buttons for each available game."""
-        self.buttons = []
+    def _create_game_cards(self):
+        """Create cards for each available game."""
+        self.game_cards = []
         
-        button_width = 200
-        button_height = 60
-        button_margin = 20
+        card_width = 200
+        card_height = 220
+        card_margin = 20
+        cards_per_row = 3
         
         # Calculate starting position
-        start_y = 200
+        start_x = (SCREEN_WIDTH - (cards_per_row * card_width + (cards_per_row - 1) * card_margin)) // 2
+        start_y = 150
         
-        # Create a button for each game
+        # Create a card for each game
         for i, game in enumerate(GAME_LIST):
-            # Create button background
-            button_bg = create_rounded_rect_image(
-                button_width,
-                button_height,
-                PRIMARY_COLOR,
-                radius=10
+            # Calculate position
+            row = i // cards_per_row
+            col = i % cards_per_row
+            x = start_x + col * (card_width + card_margin)
+            y = start_y + row * (card_height + card_margin)
+            
+            # Create the card
+            card = GameCard(
+                game,
+                x,
+                y,
+                card_width,
+                card_height,
+                self.game_manager.start_game
             )
             
-            # Create the button
-            button = Button(
-                game["name"],
-                SCREEN_WIDTH // 2 - button_width // 2,
-                start_y + i * (button_height + button_margin),
-                button_width,
-                button_height,
-                PRIMARY_COLOR,
-                TEXT_COLOR,
-                lambda g=game["id"]: self.game_manager.start_game(g),
-                button_bg
-            )
-            
-            # Add the button to the list
-            self.buttons.append(button)
+            # Add the card to the list
+            self.game_cards.append(card)
     
     def reset(self):
         """Reset the menu state."""
@@ -122,16 +120,23 @@ class ShellMenu:
         if event.type == pygame.MOUSEBUTTONDOWN:
             for button in self.buttons:
                 button.check_click(event.pos)
+            
+            for card in self.game_cards:
+                card.check_click(event.pos)
         
         # Update button hover states
         if event.type == pygame.MOUSEMOTION:
             for button in self.buttons:
                 button.update(event.pos)
+            
+            for card in self.game_cards:
+                card.update(event.pos)
     
     def update(self):
         """Update the menu state."""
-        # Nothing to update for now
-        pass
+        # Update labels
+        for label in self.labels:
+            label.update()
     
     def render(self, screen):
         """
@@ -153,6 +158,10 @@ class ShellMenu:
         # Draw the buttons
         for button in self.buttons:
             button.draw(screen)
+        
+        # Draw the game cards
+        for card in self.game_cards:
+            card.draw(screen)
     
     def _draw_decorations(self, screen):
         """
@@ -165,7 +174,7 @@ class ShellMenu:
         pygame.draw.rect(
             screen,
             (30, 30, 60),
-            pygame.Rect(0, 0, SCREEN_WIDTH, 150),
+            pygame.Rect(0, 0, SCREEN_WIDTH, 120),
             border_bottom_left_radius=20,
             border_bottom_right_radius=20
         )

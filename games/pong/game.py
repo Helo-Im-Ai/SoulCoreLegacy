@@ -31,6 +31,7 @@ class PongGame:
         self.game_over = False
         self.winner = None
         self.start_time = None
+        self.waiting_for_start = True
         
         # Create the game objects
         self.reset()
@@ -94,6 +95,7 @@ class PongGame:
         self.game_over = False
         self.winner = None
         self.start_time = time.time()
+        self.waiting_for_start = True
         
         # Track game start
         if self.analytics_service:
@@ -112,9 +114,13 @@ class PongGame:
                 self.player_paddle.moving_up = True
             elif event.key == pygame.K_DOWN:
                 self.player_paddle.moving_down = True
-            # Restart the game if it's over
-            elif event.key == pygame.K_SPACE and self.game_over:
-                self.reset()
+            # Start the game if waiting
+            elif event.key == pygame.K_SPACE:
+                if self.waiting_for_start:
+                    self.waiting_for_start = False
+                    self.logic.start_game()
+                elif self.game_over:
+                    self.reset()
             # Save game state
             elif event.key == pygame.K_s:
                 self.save_game_state()
@@ -134,7 +140,7 @@ class PongGame:
     
     def update(self):
         """Update the game state."""
-        if not self.game_over:
+        if not self.game_over and not self.waiting_for_start:
             # Update the AI if not in multiplayer mode
             if not self.is_multiplayer:
                 self.ai.update()
@@ -181,6 +187,10 @@ class PongGame:
                 
                 # Receive game state
                 self.receive_multiplayer_state()
+        elif not self.game_over and self.waiting_for_start:
+            # Update paddles even when waiting to start
+            self.player_paddle.update()
+            self.ai_paddle.update()
     
     def render(self, screen):
         """
@@ -214,8 +224,15 @@ class PongGame:
         screen.blit(player_score_text, (SCREEN_WIDTH // 4, 20))
         screen.blit(ai_score_text, (3 * SCREEN_WIDTH // 4, 20))
         
+        # Draw waiting for start message
+        if self.waiting_for_start:
+            message = "Press SPACE to start"
+            message_text = self.message_font.render(message, True, WHITE)
+            message_rect = message_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+            screen.blit(message_text, message_rect)
+        
         # Draw game over message if the game is over
-        if self.game_over:
+        elif self.game_over:
             message = f"{self.winner} wins! Press SPACE to restart."
             message_text = self.message_font.render(message, True, WHITE)
             message_rect = message_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
@@ -246,7 +263,8 @@ class PongGame:
             'player_paddle_y': self.player_paddle.y,
             'ai_paddle_y': self.ai_paddle.y,
             'game_over': self.game_over,
-            'winner': self.winner
+            'winner': self.winner,
+            'waiting_for_start': self.waiting_for_start
         }
         
         # Use 'anonymous' as user_id if not available
@@ -289,16 +307,22 @@ class PongGame:
         self.ai_score = state.get('ai_score', 0)
         self.ball.x = state.get('ball_x', SCREEN_WIDTH // 2)
         self.ball.y = state.get('ball_y', SCREEN_HEIGHT // 2)
-        self.ball.velocity_x = state.get('ball_velocity_x', 5)
+        self.ball.velocity_x = state.get('ball_velocity_x', 0)
         self.ball.velocity_y = state.get('ball_velocity_y', 0)
         self.player_paddle.y = state.get('player_paddle_y', SCREEN_HEIGHT // 2 - self.player_paddle.height // 2)
         self.ai_paddle.y = state.get('ai_paddle_y', SCREEN_HEIGHT // 2 - self.ai_paddle.height // 2)
         self.game_over = state.get('game_over', False)
         self.winner = state.get('winner', None)
+        self.waiting_for_start = state.get('waiting_for_start', True)
         
         # Update paddle rects
         self.player_paddle.rect.y = self.player_paddle.y
         self.ai_paddle.rect.y = self.ai_paddle.y
+        
+        # If the game was in progress, mark the ball as started
+        if not self.waiting_for_start and (self.ball.velocity_x != 0 or self.ball.velocity_y != 0):
+            self.ball.game_started = True
+            self.logic.game_started = True
         
         print("Game state loaded successfully.")
     
@@ -379,7 +403,8 @@ class PongGame:
             'ball_velocity_x': self.ball.velocity_x,
             'ball_velocity_y': self.ball.velocity_y,
             'player_score': self.player_score,
-            'ai_score': self.ai_score
+            'ai_score': self.ai_score,
+            'player_id': self.player_id
         }
         
         self.multiplayer_service.send_game_state(state)
