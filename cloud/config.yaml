@@ -1,0 +1,37 @@
+# SoulCoreLegacy Cloud Configuration
+
+# AWS Region
+region: us-west-2
+
+# Environment (development, staging, production)
+environment: development
+
+# Services configuration
+services:
+  # Authentication service
+  auth:
+    enabled: true
+    provider: cognito
+    user_pool_id: ""
+    client_id: ""
+  
+  # Storage service
+  storage:
+    enabled: true
+    provider: s3
+    bucket_name: soulcorelegacy-storage
+    table_name: soulcorelegacy-data
+  
+  # Multiplayer service
+  multiplayer:
+    enabled: true
+    provider: gamelift
+    fleet_id: ""
+    max_players: 4
+    matchmaking_config: ""
+  
+  # Analytics service
+  analytics:
+    enabled: true
+    provider: kinesis
+    stream_name: soulcorelegacy-analytics
