@@ -98,7 +98,7 @@ class PongGame:
         self.waiting_for_start = True
         
         # Track game start
-        if self.analytics_service:
+        if hasattr(self, 'analytics_service') and self.analytics_service:
             self.analytics_service.track_game_start('pong', 'single_player')
     
     def handle_event(self, event):

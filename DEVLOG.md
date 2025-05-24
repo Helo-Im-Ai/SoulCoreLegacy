@@ -28,3 +28,11 @@
 - Added thumbnail for NFT Artisan
 - Updated game list in configuration
 - Pushed changes to GitHub repository
+
+## Fri May 23 20:30:15 EDT 2025
+
+- Fixed class name mismatch in Photon Racer game
+- Installed PyYAML package for cloud modules
+- Created comprehensive debug test script
+- Generated debug report documenting issues and fixes
+- All games now pass tests and function correctly
