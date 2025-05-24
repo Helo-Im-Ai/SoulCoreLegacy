@@ -10,7 +10,7 @@ import random
 from core.config import SCREEN_WIDTH, SCREEN_HEIGHT, BG_COLOR, WHITE, PRIMARY_COLOR, SECONDARY_COLOR
 from core.asset_loader import load_font, create_gradient_background
 
-class TicTacToeGame:
+class Tic_tac_toeGame:
     """
     Implementation of the classic Tic-Tac-Toe game.
     """

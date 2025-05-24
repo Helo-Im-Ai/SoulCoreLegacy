@@ -73,7 +73,18 @@ class GameManager:
                 game_module = importlib.import_module(module_path)
                 
                 # Create an instance of the game
-                game_class = getattr(game_module, f"{game_id.capitalize()}Game")
+                if game_id == "snake":
+                    game_class = getattr(game_module, "SnakeGame")
+                elif game_id == "pong":
+                    game_class = getattr(game_module, "PongGame")
+                elif game_id == "tic_tac_toe":
+                    game_class = getattr(game_module, "Tic_tac_toeGame")
+                elif game_id == "photon_racer":
+                    game_class = getattr(game_module, "Photon_racerGame")
+                elif game_id == "nft_artisan":
+                    game_class = getattr(game_module, "NFTArtisanGame")
+                else:
+                    game_class = getattr(game_module, f"{game_id.capitalize()}Game")
                 self.game_modules[game_id] = game_class(self)
             
             # Switch to the game

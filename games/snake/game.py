@@ -65,7 +65,7 @@ class SnakeGame:
         self.start_time = time.time()
         
         # Track game start
-        if self.analytics_service:
+        if hasattr(self, 'analytics_service') and self.analytics_service:
             self.analytics_service.track_game_start('snake', 'classic')
     
     def handle_event(self, event):
@@ -207,31 +207,34 @@ class SnakeGame:
             print("Storage service not available.")
             return
         
-        # Create the game state
-        state = {
-            'score': self.score,
-            'snake_body': self.logic.snake.body,
-            'snake_direction': self.logic.snake.direction,
-            'food_position': self.logic.food.position,
-            'wrap_around': self.wrap_around,
-            'game_speed': self.game_speed
-        }
-        
-        # Use 'anonymous' as user_id if not available
-        user_id = 'anonymous'
-        auth_service = self.game_manager.get_cloud_service('auth')
-        if auth_service and auth_service.is_authenticated():
-            user = auth_service.get_current_user()
-            if user:
-                user_id = user.get('sub', 'anonymous')
-        
-        # Save the game state
-        success = self.storage_service.save_game_state('snake', user_id, state)
-        
-        if success:
-            print("Game state saved successfully.")
-        else:
-            print("Failed to save game state.")
+        try:
+            # Create the game state
+            state = {
+                'score': self.score,
+                'snake_body': self.logic.snake.body,
+                'snake_direction': self.logic.snake.direction,
+                'food_position': self.logic.food.position,
+                'wrap_around': self.wrap_around,
+                'game_speed': self.game_speed
+            }
+            
+            # Use 'anonymous' as user_id if not available
+            user_id = 'anonymous'
+            auth_service = self.game_manager.get_cloud_service('auth')
+            if auth_service and auth_service.is_authenticated():
+                user = auth_service.get_current_user()
+                if user:
+                    user_id = user.get('sub', 'anonymous')
+            
+            # Save the game state
+            success = self.storage_service.save_game_state('snake', user_id, state)
+            
+            if success:
+                print("Game state saved successfully.")
+            else:
+                print("Failed to save game state.")
+        except Exception as e:
+            print(f"Error saving game state: {e}")
     
     def load_game_state(self):
         """Load a saved game state."""
@@ -239,79 +242,85 @@ class SnakeGame:
             print("Storage service not available.")
             return
         
-        # Use 'anonymous' as user_id if not available
-        user_id = 'anonymous'
-        auth_service = self.game_manager.get_cloud_service('auth')
-        if auth_service and auth_service.is_authenticated():
-            user = auth_service.get_current_user()
-            if user:
-                user_id = user.get('sub', 'anonymous')
-        
-        # Load the game state
-        state = self.storage_service.load_game_state('snake', user_id)
-        
-        if not state:
-            print("No saved game state found.")
-            return
-        
-        # Reset the game
-        self.logic.reset()
-        
-        # Restore the game state
-        self.score = state.get('score', 0)
-        self.logic.score = self.score
-        self.wrap_around = state.get('wrap_around', False)
-        self.logic.wrap_around = self.wrap_around
-        self.game_speed = state.get('game_speed', 10)
-        
-        # Restore the snake
-        snake_body = state.get('snake_body')
-        if snake_body and len(snake_body) > 0:
-            self.logic.snake.body = snake_body
-            self.logic.snake.head = snake_body[0]
-            self.logic.snake.length = len(snake_body)
+        try:
+            # Use 'anonymous' as user_id if not available
+            user_id = 'anonymous'
+            auth_service = self.game_manager.get_cloud_service('auth')
+            if auth_service and auth_service.is_authenticated():
+                user = auth_service.get_current_user()
+                if user:
+                    user_id = user.get('sub', 'anonymous')
             
-            # Restore the direction
-            direction = state.get('snake_direction')
-            if direction:
-                self.logic.snake.direction = direction
+            # Load the game state
+            state = self.storage_service.load_game_state('snake', user_id)
+            
+            if not state:
+                print("No saved game state found.")
+                return
+            
+            # Reset the game
+            self.logic.reset()
+            
+            # Restore the game state
+            self.score = state.get('score', 0)
+            self.logic.score = self.score
+            self.wrap_around = state.get('wrap_around', False)
+            self.logic.wrap_around = self.wrap_around
+            self.game_speed = state.get('game_speed', 10)
+            
+            # Restore the snake
+            snake_body = state.get('snake_body')
+            if snake_body and len(snake_body) > 0:
+                self.logic.snake.body = snake_body
+                self.logic.snake.head = snake_body[0]
+                self.logic.snake.length = len(snake_body)
                 
-                # Set the velocity based on the direction
-                if direction == "UP":
-                    self.logic.snake.x_change = 0
-                    self.logic.snake.y_change = -self.logic.snake.speed
-                elif direction == "DOWN":
-                    self.logic.snake.x_change = 0
-                    self.logic.snake.y_change = self.logic.snake.speed
-                elif direction == "LEFT":
-                    self.logic.snake.x_change = -self.logic.snake.speed
-                    self.logic.snake.y_change = 0
-                elif direction == "RIGHT":
-                    self.logic.snake.x_change = self.logic.snake.speed
-                    self.logic.snake.y_change = 0
-        
-        # Restore the food
-        food_position = state.get('food_position')
-        if food_position:
-            self.logic.food.position = food_position
-        
-        print("Game state loaded successfully.")
+                # Restore the direction
+                direction = state.get('snake_direction')
+                if direction:
+                    self.logic.snake.direction = direction
+                    
+                    # Set the velocity based on the direction
+                    if direction == "UP":
+                        self.logic.snake.x_change = 0
+                        self.logic.snake.y_change = -self.logic.snake.speed
+                    elif direction == "DOWN":
+                        self.logic.snake.x_change = 0
+                        self.logic.snake.y_change = self.logic.snake.speed
+                    elif direction == "LEFT":
+                        self.logic.snake.x_change = -self.logic.snake.speed
+                        self.logic.snake.y_change = 0
+                    elif direction == "RIGHT":
+                        self.logic.snake.x_change = self.logic.snake.speed
+                        self.logic.snake.y_change = 0
+            
+            # Restore the food
+            food_position = state.get('food_position')
+            if food_position:
+                self.logic.food.position = food_position
+            
+            print("Game state loaded successfully.")
+        except Exception as e:
+            print(f"Error loading game state: {e}")
     
     def save_high_score(self):
         """Save the high score."""
         if not self.storage_service:
             return
         
-        # Use 'anonymous' as user_id if not available
-        user_id = 'anonymous'
-        auth_service = self.game_manager.get_cloud_service('auth')
-        if auth_service and auth_service.is_authenticated():
-            user = auth_service.get_current_user()
-            if user:
-                user_id = user.get('sub', 'anonymous')
-        
-        # Save the high score
-        self.storage_service.save_high_score('snake', user_id, self.high_score)
+        try:
+            # Use 'anonymous' as user_id if not available
+            user_id = 'anonymous'
+            auth_service = self.game_manager.get_cloud_service('auth')
+            if auth_service and auth_service.is_authenticated():
+                user = auth_service.get_current_user()
+                if user:
+                    user_id = user.get('sub', 'anonymous')
+            
+            # Save the high score
+            self.storage_service.save_high_score('snake', user_id, self.high_score)
+        except Exception as e:
+            print(f"Error saving high score: {e}")
     
     def load_high_score(self):
         """Load the high score."""
@@ -327,10 +336,14 @@ class SnakeGame:
                 user_id = user.get('sub', 'anonymous')
         
         # Load high scores
-        scores = self.storage_service.get_high_scores('snake', limit=1)
-        
-        if scores and len(scores) > 0:
-            self.high_score = scores[0].get('score', 0)
+        try:
+            scores = self.storage_service.get_high_scores('snake', limit=1)
+            
+            if scores and len(scores) > 0:
+                self.high_score = scores[0].get('score', 0)
+        except Exception as e:
+            print(f"Error loading high score: {e}")
+            self.high_score = 0
     
     def track_game_end(self, outcome):
         """
@@ -339,7 +352,7 @@ class SnakeGame:
         Args:
             outcome (str): The outcome of the game ('win', 'loss', 'draw')
         """
-        if not self.analytics_service:
+        if hasattr(self, 'analytics_service') and self.analytics_service:
             return
         
         # Calculate duration
