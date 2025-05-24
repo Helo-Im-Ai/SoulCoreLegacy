@@ -11,7 +11,7 @@ import math
 from core.config import SCREEN_WIDTH, SCREEN_HEIGHT, BG_COLOR, WHITE, PRIMARY_COLOR, SECONDARY_COLOR
 from core.asset_loader import load_font, create_gradient_background
 
-class PhotonRacerGame:
+class Photon_racerGame:
     """
     Implementation of the Photon Racer game.
     """
