@@ -15,6 +15,9 @@ FPS = 60
 # Define colors
 BACKGROUND_COLOR = (10, 5, 30)  # Deep space black with hint of purple
 
+# Define paths
+THUMBNAIL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "thumbnails")
+
 # Mock game list for testing
 GAME_LIST = [
     {
@@ -24,7 +27,8 @@ GAME_LIST = [
         "implemented": True,
         "popularity": 8,
         "new_release": False,
-        "featured": True
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cosmic_racer.png")
     },
     {
         "id": "dungeon_delver",
@@ -33,7 +37,8 @@ GAME_LIST = [
         "implemented": True,
         "popularity": 6,
         "new_release": True,
-        "featured": False
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "dungeon_delver.png")
     },
     {
         "id": "nft_artisan",
@@ -42,7 +47,8 @@ GAME_LIST = [
         "implemented": True,
         "popularity": 7,
         "new_release": False,
-        "featured": False
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "nft_artisan.png")
     },
     {
         "id": "snake",
@@ -51,7 +57,8 @@ GAME_LIST = [
         "implemented": True,
         "popularity": 5,
         "new_release": False,
-        "featured": False
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "snake.png")
     },
     {
         "id": "pong",
@@ -60,7 +67,8 @@ GAME_LIST = [
         "implemented": True,
         "popularity": 4,
         "new_release": False,
-        "featured": False
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "pong.png")
     },
     {
         "id": "asteroids",
@@ -69,7 +77,8 @@ GAME_LIST = [
         "implemented": True,
         "popularity": 7,
         "new_release": True,
-        "featured": False
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "asteroids.png")
     }
 ]
 
@@ -351,8 +360,39 @@ class GameCard:
             object_id=f"#game_card_{game_info['id']}"
         )
         
+        # Load thumbnail if available
+        self.thumbnail = None
+        thumbnail_path = game_info.get('thumbnail')
+        if thumbnail_path and os.path.exists(thumbnail_path):
+            try:
+                # Load the thumbnail image
+                self.thumbnail = pygame.image.load(thumbnail_path)
+                
+                # Create thumbnail image element
+                thumbnail_rect = pygame.Rect(10, 10, rect.width - 20, 100)
+                
+                # Scale the thumbnail to fit
+                scaled_thumbnail = pygame.transform.scale(self.thumbnail, (thumbnail_rect.width, thumbnail_rect.height))
+                
+                # Create the image element
+                self.thumbnail_element = pygame_gui.elements.UIImage(
+                    relative_rect=thumbnail_rect,
+                    image_surface=scaled_thumbnail,
+                    manager=ui_manager,
+                    container=self.panel,
+                    object_id=f"#game_card_{game_info['id']}_thumbnail"
+                )
+                
+                # Adjust layout for thumbnail
+                title_y = 120
+            except Exception as e:
+                print(f"Error loading thumbnail for {game_info['id']}: {e}")
+                title_y = 10
+        else:
+            title_y = 10
+        
         # Create the title
-        title_rect = pygame.Rect(0, 10, rect.width - 20, 30)
+        title_rect = pygame.Rect(0, title_y, rect.width - 20, 30)
         self.title = pygame_gui.elements.UILabel(
             relative_rect=title_rect,
             text=game_info['name'],
@@ -362,7 +402,7 @@ class GameCard:
         )
         
         # Create the description
-        desc_rect = pygame.Rect(10, 50, rect.width - 20, 60)
+        desc_rect = pygame.Rect(10, title_y + 40, rect.width - 20, 60)
         self.description = pygame_gui.elements.UITextBox(
             html_text=game_info['description'],
             relative_rect=desc_rect,
@@ -592,7 +632,7 @@ class ProfessionalMenu:
         
         # Calculate card layout
         card_width = 300
-        card_height = 200
+        card_height = 300  # Increased height to accommodate thumbnails
         cards_per_row = 3
         horizontal_spacing = 30
         vertical_spacing = 30
