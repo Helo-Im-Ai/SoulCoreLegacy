@@ -73,6 +73,13 @@ GAME_LIST = [
         "implemented": True
     },
     {
+        "id": "asteroids",
+        "name": "Asteroids",
+        "description": "Destroy asteroids in space",
+        "thumbnail": "asteroids/assets/thumbnail.png",
+        "implemented": True
+    },
+    {
         "id": "breakout",
         "name": "Breakout",
         "description": "Break bricks with a bouncing ball",

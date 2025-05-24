@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<!-- saved from url=(0072)https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html -->
+<html class="writer-html5" lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shaders and Rendering — pyglet v2.1.6</title>
+      <style type="text/css">:root, :host {
+  --fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
+  --fa-font-regular: normal 400 1em/1 "Font Awesome 6 Free";
+  --fa-font-light: normal 300 1em/1 "Font Awesome 6 Pro";
+  --fa-font-thin: normal 100 1em/1 "Font Awesome 6 Pro";
+  --fa-font-duotone: normal 900 1em/1 "Font Awesome 6 Duotone";
+  --fa-font-duotone-regular: normal 400 1em/1 "Font Awesome 6 Duotone";
+  --fa-font-duotone-light: normal 300 1em/1 "Font Awesome 6 Duotone";
+  --fa-font-duotone-thin: normal 100 1em/1 "Font Awesome 6 Duotone";
+  --fa-font-brands: normal 400 1em/1 "Font Awesome 6 Brands";
+  --fa-font-sharp-solid: normal 900 1em/1 "Font Awesome 6 Sharp";
+  --fa-font-sharp-regular: normal 400 1em/1 "Font Awesome 6 Sharp";
+  --fa-font-sharp-light: normal 300 1em/1 "Font Awesome 6 Sharp";
+  --fa-font-sharp-thin: normal 100 1em/1 "Font Awesome 6 Sharp";
+  --fa-font-sharp-duotone-solid: normal 900 1em/1 "Font Awesome 6 Sharp Duotone";
+  --fa-font-sharp-duotone-regular: normal 400 1em/1 "Font Awesome 6 Sharp Duotone";
+  --fa-font-sharp-duotone-light: normal 300 1em/1 "Font Awesome 6 Sharp Duotone";
+  --fa-font-sharp-duotone-thin: normal 100 1em/1 "Font Awesome 6 Sharp Duotone";
+}
+
+svg:not(:root).svg-inline--fa, svg:not(:host).svg-inline--fa {
+  overflow: visible;
+  box-sizing: content-box;
+}
+
+.svg-inline--fa {
+  display: var(--fa-display, inline-block);
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+}
+.svg-inline--fa.fa-2xs {
+  vertical-align: 0.1em;
+}
+.svg-inline--fa.fa-xs {
+  vertical-align: 0em;
+}
+.svg-inline--fa.fa-sm {
+  vertical-align: -0.0714285705em;
+}
+.svg-inline--fa.fa-lg {
+  vertical-align: -0.2em;
+}
+.svg-inline--fa.fa-xl {
+  vertical-align: -0.25em;
+}
+.svg-inline--fa.fa-2xl {
+  vertical-align: -0.3125em;
+}
+.svg-inline--fa.fa-pull-left {
+  margin-right: var(--fa-pull-margin, 0.3em);
+  width: auto;
+}
+.svg-inline--fa.fa-pull-right {
+  margin-left: var(--fa-pull-margin, 0.3em);
+  width: auto;
+}
+.svg-inline--fa.fa-li {
+  width: var(--fa-li-width, 2em);
+  top: 0.25em;
+}
+.svg-inline--fa.fa-fw {
+  width: var(--fa-fw-width, 1.25em);
+}
+
+.fa-layers svg.svg-inline--fa {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.fa-layers-counter, .fa-layers-text {
+  display: inline-block;
+  position: absolute;
+  text-align: center;
+}
+
+.fa-layers {
+  display: inline-block;
+  height: 1em;
+  position: relative;
+  text-align: center;
+  vertical-align: -0.125em;
+  width: 1em;
+}
+.fa-layers svg.svg-inline--fa {
+  transform-origin: center center;
+}
+
+.fa-layers-text {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+}
+
+.fa-layers-counter {
+  background-color: var(--fa-counter-background-color, #ff253a);
+  border-radius: var(--fa-counter-border-radius, 1em);
+  box-sizing: border-box;
+  color: var(--fa-inverse, #fff);
+  line-height: var(--fa-counter-line-height, 1);
+  max-width: var(--fa-counter-max-width, 5em);
+  min-width: var(--fa-counter-min-width, 1.5em);
+  overflow: hidden;
+  padding: var(--fa-counter-padding, 0.25em 0.5em);
+  right: var(--fa-right, 0);
+  text-overflow: ellipsis;
+  top: var(--fa-top, 0);
+  transform: scale(var(--fa-counter-scale, 0.25));
+  transform-origin: top right;
+}
+
+.fa-layers-bottom-right {
+  bottom: var(--fa-bottom, 0);
+  right: var(--fa-right, 0);
+  top: auto;
+  transform: scale(var(--fa-layers-scale, 0.25));
+  transform-origin: bottom right;
+}
+
+.fa-layers-bottom-left {
+  bottom: var(--fa-bottom, 0);
+  left: var(--fa-left, 0);
+  right: auto;
+  top: auto;
+  transform: scale(var(--fa-layers-scale, 0.25));
+  transform-origin: bottom left;
+}
+
+.fa-layers-top-right {
+  top: var(--fa-top, 0);
+  right: var(--fa-right, 0);
+  transform: scale(var(--fa-layers-scale, 0.25));
+  transform-origin: top right;
+}
+
+.fa-layers-top-left {
+  left: var(--fa-left, 0);
+  right: auto;
+  top: var(--fa-top, 0);
+  transform: scale(var(--fa-layers-scale, 0.25));
+  transform-origin: top left;
+}
+
+.fa-1x {
+  font-size: 1em;
+}
+
+.fa-2x {
+  font-size: 2em;
+}
+
+.fa-3x {
+  font-size: 3em;
+}
+
+.fa-4x {
+  font-size: 4em;
+}
+
+.fa-5x {
+  font-size: 5em;
+}
+
+.fa-6x {
+  font-size: 6em;
+}
+
+.fa-7x {
+  font-size: 7em;
+}
+
+.fa-8x {
+  font-size: 8em;
+}
+
+.fa-9x {
+  font-size: 9em;
+}
+
+.fa-10x {
+  font-size: 10em;
+}
+
+.fa-2xs {
+  font-size: 0.625em;
+  line-height: 0.1em;
+  vertical-align: 0.225em;
+}
+
+.fa-xs {
+  font-size: 0.75em;
+  line-height: 0.0833333337em;
+  vertical-align: 0.125em;
+}
+
+.fa-sm {
+  font-size: 0.875em;
+  line-height: 0.0714285718em;
+  vertical-align: 0.0535714295em;
+}
+
+.fa-lg {
+  font-size: 1.25em;
+  line-height: 0.05em;
+  vertical-align: -0.075em;
+}
+
+.fa-xl {
+  font-size: 1.5em;
+  line-height: 0.0416666682em;
+  vertical-align: -0.125em;
+}
+
+.fa-2xl {
+  font-size: 2em;
+  line-height: 0.03125em;
+  vertical-align: -0.1875em;
+}
+
+.fa-fw {
+  text-align: center;
+  width: 1.25em;
+}
+
+.fa-ul {
+  list-style-type: none;
+  margin-left: var(--fa-li-margin, 2.5em);
+  padding-left: 0;
+}
+.fa-ul > li {
+  position: relative;
+}
+
+.fa-li {
+  left: calc(-1 * var(--fa-li-width, 2em));
+  position: absolute;
+  text-align: center;
+  width: var(--fa-li-width, 2em);
+  line-height: inherit;
+}
+
+.fa-border {
+  border-color: var(--fa-border-color, #eee);
+  border-radius: var(--fa-border-radius, 0.1em);
+  border-style: var(--fa-border-style, solid);
+  border-width: var(--fa-border-width, 0.08em);
+  padding: var(--fa-border-padding, 0.2em 0.25em 0.15em);
+}
+
+.fa-pull-left {
+  float: left;
+  margin-right: var(--fa-pull-margin, 0.3em);
+}
+
+.fa-pull-right {
+  float: right;
+  margin-left: var(--fa-pull-margin, 0.3em);
+}
+
+.fa-beat {
+  animation-name: fa-beat;
+  animation-delay: var(--fa-animation-delay, 0s);
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 1s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, ease-in-out);
+}
+
+.fa-bounce {
+  animation-name: fa-bounce;
+  animation-delay: var(--fa-animation-delay, 0s);
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 1s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, cubic-bezier(0.28, 0.84, 0.42, 1));
+}
+
+.fa-fade {
+  animation-name: fa-fade;
+  animation-delay: var(--fa-animation-delay, 0s);
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 1s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, cubic-bezier(0.4, 0, 0.6, 1));
+}
+
+.fa-beat-fade {
+  animation-name: fa-beat-fade;
+  animation-delay: var(--fa-animation-delay, 0s);
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 1s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, cubic-bezier(0.4, 0, 0.6, 1));
+}
+
+.fa-flip {
+  animation-name: fa-flip;
+  animation-delay: var(--fa-animation-delay, 0s);
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 1s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, ease-in-out);
+}
+
+.fa-shake {
+  animation-name: fa-shake;
+  animation-delay: var(--fa-animation-delay, 0s);
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 1s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, linear);
+}
+
+.fa-spin {
+  animation-name: fa-spin;
+  animation-delay: var(--fa-animation-delay, 0s);
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 2s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, linear);
+}
+
+.fa-spin-reverse {
+  --fa-animation-direction: reverse;
+}
+
+.fa-pulse,
+.fa-spin-pulse {
+  animation-name: fa-spin;
+  animation-direction: var(--fa-animation-direction, normal);
+  animation-duration: var(--fa-animation-duration, 1s);
+  animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+  animation-timing-function: var(--fa-animation-timing, steps(8));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fa-beat,
+.fa-bounce,
+.fa-fade,
+.fa-beat-fade,
+.fa-flip,
+.fa-pulse,
+.fa-shake,
+.fa-spin,
+.fa-spin-pulse {
+    animation-delay: -1ms;
+    animation-duration: 1ms;
+    animation-iteration-count: 1;
+    transition-delay: 0s;
+    transition-duration: 0s;
+  }
+}
+@keyframes fa-beat {
+  0%, 90% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(var(--fa-beat-scale, 1.25));
+  }
+}
+@keyframes fa-bounce {
+  0% {
+    transform: scale(1, 1) translateY(0);
+  }
+  10% {
+    transform: scale(var(--fa-bounce-start-scale-x, 1.1), var(--fa-bounce-start-scale-y, 0.9)) translateY(0);
+  }
+  30% {
+    transform: scale(var(--fa-bounce-jump-scale-x, 0.9), var(--fa-bounce-jump-scale-y, 1.1)) translateY(var(--fa-bounce-height, -0.5em));
+  }
+  50% {
+    transform: scale(var(--fa-bounce-land-scale-x, 1.05), var(--fa-bounce-land-scale-y, 0.95)) translateY(0);
+  }
+  57% {
+    transform: scale(1, 1) translateY(var(--fa-bounce-rebound, -0.125em));
+  }
+  64% {
+    transform: scale(1, 1) translateY(0);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+@keyframes fa-fade {
+  50% {
+    opacity: var(--fa-fade-opacity, 0.4);
+  }
+}
+@keyframes fa-beat-fade {
+  0%, 100% {
+    opacity: var(--fa-beat-fade-opacity, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(var(--fa-beat-fade-scale, 1.125));
+  }
+}
+@keyframes fa-flip {
+  50% {
+    transform: rotate3d(var(--fa-flip-x, 0), var(--fa-flip-y, 1), var(--fa-flip-z, 0), var(--fa-flip-angle, -180deg));
+  }
+}
+@keyframes fa-shake {
+  0% {
+    transform: rotate(-15deg);
+  }
+  4% {
+    transform: rotate(15deg);
+  }
+  8%, 24% {
+    transform: rotate(-18deg);
+  }
+  12%, 28% {
+    transform: rotate(18deg);
+  }
+  16% {
+    transform: rotate(-22deg);
+  }
+  20% {
+    transform: rotate(22deg);
+  }
+  32% {
+    transform: rotate(-12deg);
+  }
+  36% {
+    transform: rotate(12deg);
+  }
+  40%, 100% {
+    transform: rotate(0deg);
+  }
+}
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.fa-rotate-90 {
+  transform: rotate(90deg);
+}
+
+.fa-rotate-180 {
+  transform: rotate(180deg);
+}
+
+.fa-rotate-270 {
+  transform: rotate(270deg);
+}
+
+.fa-flip-horizontal {
+  transform: scale(-1, 1);
+}
+
+.fa-flip-vertical {
+  transform: scale(1, -1);
+}
+
+.fa-flip-both,
+.fa-flip-horizontal.fa-flip-vertical {
+  transform: scale(-1, -1);
+}
+
+.fa-rotate-by {
+  transform: rotate(var(--fa-rotate-angle, 0));
+}
+
+.fa-stack {
+  display: inline-block;
+  vertical-align: middle;
+  height: 2em;
+  position: relative;
+  width: 2.5em;
+}
+
+.fa-stack-1x,
+.fa-stack-2x {
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: var(--fa-stack-z-index, auto);
+}
+
+.svg-inline--fa.fa-stack-1x {
+  height: 1em;
+  width: 1.25em;
+}
+.svg-inline--fa.fa-stack-2x {
+  height: 2em;
+  width: 2.5em;
+}
+
+.fa-inverse {
+  color: var(--fa-inverse, #fff);
+}
+
+.sr-only,
+.fa-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:not(:focus),
+.fa-sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.svg-inline--fa .fa-primary {
+  fill: var(--fa-primary-color, currentColor);
+  opacity: var(--fa-primary-opacity, 1);
+}
+
+.svg-inline--fa .fa-secondary {
+  fill: var(--fa-secondary-color, currentColor);
+  opacity: var(--fa-secondary-opacity, 0.4);
+}
+
+.svg-inline--fa.fa-swap-opacity .fa-primary {
+  opacity: var(--fa-secondary-opacity, 0.4);
+}
+
+.svg-inline--fa.fa-swap-opacity .fa-secondary {
+  opacity: var(--fa-primary-opacity, 1);
+}
+
+.svg-inline--fa mask .fa-primary,
+.svg-inline--fa mask .fa-secondary {
+  fill: black;
+}</style><link rel="stylesheet" type="text/css" href="./Shaders and Rendering — pyglet v2.1.6_files/pygments.css">
+      <link rel="stylesheet" type="text/css" href="./Shaders and Rendering — pyglet v2.1.6_files/custom.css">
+      <link rel="stylesheet" type="text/css" href="./Shaders and Rendering — pyglet v2.1.6_files/graphviz.css">
+      <link rel="stylesheet" type="text/css" href="./Shaders and Rendering — pyglet v2.1.6_files/custom.css">
+
+  
+    <link rel="shortcut icon" href="https://pyglet.readthedocs.io/en/latest/_static/favicon.ico">
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="./Shaders and Rendering — pyglet v2.1.6_files/jquery.js"></script>
+        <script src="./Shaders and Rendering — pyglet v2.1.6_files/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="./Shaders and Rendering — pyglet v2.1.6_files/documentation_options.js"></script>
+        <script src="./Shaders and Rendering — pyglet v2.1.6_files/doctools.js"></script>
+        <script src="./Shaders and Rendering — pyglet v2.1.6_files/sphinx_highlight.js"></script>
+    <script src="./Shaders and Rendering — pyglet v2.1.6_files/theme.js"></script>
+    <link rel="index" title="Index" href="https://pyglet.readthedocs.io/en/latest/genindex.html">
+    <link rel="search" title="Search" href="https://pyglet.readthedocs.io/en/latest/search.html">
+    <link rel="next" title="Event dispatching &amp; handling" href="https://pyglet.readthedocs.io/en/latest/programming_guide/events.html">
+    <link rel="prev" title="Application resources" href="https://pyglet.readthedocs.io/en/latest/programming_guide/resources.html"> 
+<script async="" type="text/javascript" src="./Shaders and Rendering — pyglet v2.1.6_files/readthedocs-addons.js"></script><meta name="readthedocs-project-slug" content="pyglet"><meta name="readthedocs-version-slug" content="latest"><meta name="readthedocs-resolver-filename" content="/programming_guide/rendering.html"><meta name="readthedocs-http-status" content="200"><script id="ethicaladsjs" type="text/javascript" async="true" src="./Shaders and Rendering — pyglet v2.1.6_files/ethicalads.min.js"></script><style>[data-ea-publisher].loaded,[data-ea-type].loaded{font-size:14px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-weight:normal;font-style:normal;letter-spacing:0px;vertical-align:baseline;line-height:1.3em}[data-ea-publisher].loaded a,[data-ea-type].loaded a{text-decoration:none}[data-ea-publisher].loaded .ea-pixel,[data-ea-type].loaded .ea-pixel{display:none}[data-ea-publisher].loaded .ea-content,[data-ea-type].loaded .ea-content{margin:1em 1em .5em 1em;padding:1em;background:rgba(0,0,0,.03);color:#505050}[data-ea-publisher].loaded .ea-content a:link,[data-ea-type].loaded .ea-content a:link{color:#505050}[data-ea-publisher].loaded .ea-content a:visited,[data-ea-type].loaded .ea-content a:visited{color:#505050}[data-ea-publisher].loaded .ea-content a:hover,[data-ea-type].loaded .ea-content a:hover{color:#373737}[data-ea-publisher].loaded .ea-content a:active,[data-ea-type].loaded .ea-content a:active{color:#373737}[data-ea-publisher].loaded .ea-content a strong,[data-ea-publisher].loaded .ea-content a b,[data-ea-type].loaded .ea-content a strong,[data-ea-type].loaded .ea-content a b{color:#088cdb}[data-ea-publisher].loaded .ea-callout a:link,[data-ea-type].loaded .ea-callout a:link{color:#6a6a6a}[data-ea-publisher].loaded .ea-callout a:visited,[data-ea-type].loaded .ea-callout a:visited{color:#6a6a6a}[data-ea-publisher].loaded .ea-callout a:hover,[data-ea-type].loaded .ea-callout a:hover{color:#505050}[data-ea-publisher].loaded .ea-callout a:active,[data-ea-type].loaded .ea-callout a:active{color:#505050}[data-ea-publisher].loaded .ea-callout a strong,[data-ea-publisher].loaded .ea-callout a b,[data-ea-type].loaded .ea-callout a strong,[data-ea-type].loaded .ea-callout a b{color:#088cdb}[data-ea-publisher].loaded .ea-callout a,[data-ea-type].loaded .ea-callout a{font-size:.8em}[data-ea-publisher].loaded .ea-domain,[data-ea-type].loaded .ea-domain{margin-top:.75em;font-size:.8em;text-align:center;color:#9d9d9d}[data-ea-publisher].loaded.dark .ea-content,[data-ea-type].loaded.dark .ea-content{background:rgba(255,255,255,.05);color:#dcdcdc}[data-ea-publisher].loaded.dark .ea-content a:link,[data-ea-type].loaded.dark .ea-content a:link{color:#dcdcdc}[data-ea-publisher].loaded.dark .ea-content a:visited,[data-ea-type].loaded.dark .ea-content a:visited{color:#dcdcdc}[data-ea-publisher].loaded.dark .ea-content a:hover,[data-ea-type].loaded.dark .ea-content a:hover{color:#f6f6f6}[data-ea-publisher].loaded.dark .ea-content a:active,[data-ea-type].loaded.dark .ea-content a:active{color:#f6f6f6}[data-ea-publisher].loaded.dark .ea-content a strong,[data-ea-publisher].loaded.dark .ea-content a b,[data-ea-type].loaded.dark .ea-content a strong,[data-ea-type].loaded.dark .ea-content a b{color:#50baf9}[data-ea-publisher].loaded.dark .ea-callout a:link,[data-ea-type].loaded.dark .ea-callout a:link{color:#c3c3c3}[data-ea-publisher].loaded.dark .ea-callout a:visited,[data-ea-type].loaded.dark .ea-callout a:visited{color:#c3c3c3}[data-ea-publisher].loaded.dark .ea-callout a:hover,[data-ea-type].loaded.dark .ea-callout a:hover{color:#dcdcdc}[data-ea-publisher].loaded.dark .ea-callout a:active,[data-ea-type].loaded.dark .ea-callout a:active{color:#dcdcdc}[data-ea-publisher].loaded.dark .ea-callout a strong,[data-ea-publisher].loaded.dark .ea-callout a b,[data-ea-type].loaded.dark .ea-callout a strong,[data-ea-type].loaded.dark .ea-callout a b{color:#50baf9}[data-ea-publisher].loaded.dark .ea-domain,[data-ea-type].loaded.dark .ea-domain{color:#909090}@media(prefers-color-scheme: dark){[data-ea-publisher].loaded.adaptive .ea-content,[data-ea-type].loaded.adaptive .ea-content{background:rgba(255,255,255,.05);color:#dcdcdc}[data-ea-publisher].loaded.adaptive .ea-content a:link,[data-ea-type].loaded.adaptive .ea-content a:link{color:#dcdcdc}[data-ea-publisher].loaded.adaptive .ea-content a:visited,[data-ea-type].loaded.adaptive .ea-content a:visited{color:#dcdcdc}[data-ea-publisher].loaded.adaptive .ea-content a:hover,[data-ea-type].loaded.adaptive .ea-content a:hover{color:#f6f6f6}[data-ea-publisher].loaded.adaptive .ea-content a:active,[data-ea-type].loaded.adaptive .ea-content a:active{color:#f6f6f6}[data-ea-publisher].loaded.adaptive .ea-content a strong,[data-ea-publisher].loaded.adaptive .ea-content a b,[data-ea-type].loaded.adaptive .ea-content a strong,[data-ea-type].loaded.adaptive .ea-content a b{color:#50baf9}[data-ea-publisher].loaded.adaptive .ea-callout a:link,[data-ea-type].loaded.adaptive .ea-callout a:link{color:#c3c3c3}[data-ea-publisher].loaded.adaptive .ea-callout a:visited,[data-ea-type].loaded.adaptive .ea-callout a:visited{color:#c3c3c3}[data-ea-publisher].loaded.adaptive .ea-callout a:hover,[data-ea-type].loaded.adaptive .ea-callout a:hover{color:#dcdcdc}[data-ea-publisher].loaded.adaptive .ea-callout a:active,[data-ea-type].loaded.adaptive .ea-callout a:active{color:#dcdcdc}[data-ea-publisher].loaded.adaptive .ea-callout a strong,[data-ea-publisher].loaded.adaptive .ea-callout a b,[data-ea-type].loaded.adaptive .ea-callout a strong,[data-ea-type].loaded.adaptive .ea-callout a b{color:#50baf9}[data-ea-publisher].loaded.adaptive .ea-domain,[data-ea-type].loaded.adaptive .ea-domain{color:#909090}}[data-ea-publisher].loaded .ea-content,[data-ea-type].loaded .ea-content{border:0px;border-radius:3px;box-shadow:0px 2px 3px rgba(0,0,0,.15)}[data-ea-publisher].loaded.raised .ea-content,[data-ea-type].loaded.raised .ea-content{border:0px;border-radius:3px;box-shadow:0px 2px 3px rgba(0,0,0,.15)}[data-ea-publisher].loaded.bordered .ea-content,[data-ea-type].loaded.bordered .ea-content{border:1px solid rgba(0,0,0,.04);border-radius:3px;box-shadow:none}[data-ea-publisher].loaded.bordered.dark .ea-content,[data-ea-type].loaded.bordered.dark .ea-content{border:1px solid rgba(255,255,255,.07)}@media(prefers-color-scheme: dark){[data-ea-publisher].loaded.bordered.adaptive .ea-content,[data-ea-type].loaded.bordered.adaptive .ea-content{border:1px solid rgba(255,255,255,.07)}}[data-ea-publisher].loaded.flat .ea-content,[data-ea-type].loaded.flat .ea-content{border:0px;border-radius:3px;box-shadow:none}[data-ea-type=image].loaded,[data-ea-publisher]:not([data-ea-type]).loaded,.ea-type-image{display:inline-block}[data-ea-type=image].loaded .ea-content,[data-ea-publisher]:not([data-ea-type]).loaded .ea-content,.ea-type-image .ea-content{max-width:180px;overflow:auto;text-align:center}[data-ea-type=image].loaded .ea-content>a>img,[data-ea-publisher]:not([data-ea-type]).loaded .ea-content>a>img,.ea-type-image .ea-content>a>img{width:120px;height:90px;display:inline-block}[data-ea-type=image].loaded .ea-content>.ea-text,[data-ea-publisher]:not([data-ea-type]).loaded .ea-content>.ea-text,.ea-type-image .ea-content>.ea-text{margin-top:1em;font-size:1em;text-align:center}[data-ea-type=image].loaded .ea-callout,[data-ea-publisher]:not([data-ea-type]).loaded .ea-callout,.ea-type-image .ea-callout{max-width:180px;margin:0em 1em 1em 1em;padding-left:1em;padding-right:1em;font-style:italic;text-align:right}[data-ea-type=image].loaded.horizontal .ea-content,[data-ea-publisher]:not([data-ea-type]).loaded.horizontal .ea-content,.ea-type-image.horizontal .ea-content{max-width:320px}[data-ea-type=image].loaded.horizontal .ea-content>a>img,[data-ea-publisher]:not([data-ea-type]).loaded.horizontal .ea-content>a>img,.ea-type-image.horizontal .ea-content>a>img{float:left;margin-right:1em}[data-ea-type=image].loaded.horizontal .ea-content .ea-text,[data-ea-publisher]:not([data-ea-type]).loaded.horizontal .ea-content .ea-text,.ea-type-image.horizontal .ea-content .ea-text{margin-top:0em;text-align:left;overflow:auto}[data-ea-type=image].loaded.horizontal .ea-callout,[data-ea-publisher]:not([data-ea-type]).loaded.horizontal .ea-callout,.ea-type-image.horizontal .ea-callout{max-width:320px;text-align:right}[data-ea-type=text].loaded,.ea-type-text{font-size:14px}[data-ea-type=text].loaded .ea-content,.ea-type-text .ea-content{text-align:left}[data-ea-type=text].loaded .ea-callout,.ea-type-text .ea-callout{margin:.5em 1em 1em 1em;padding-left:1em;padding-right:1em;text-align:right;font-style:italic}[data-ea-style=stickybox].loaded{position:fixed;bottom:20px;right:20px;z-index:100}[data-ea-style=stickybox].loaded .ea-type-image .ea-stickybox-hide{cursor:pointer;position:absolute;top:.75em;right:.75em;background-color:#fefefe;border:1px solid #088cdb;border-radius:50%;color:#088cdb;font-size:1em;text-align:center;height:1.5em;width:1.5em;line-height:1.4}@media(max-width: 1300px){[data-ea-style=stickybox].loaded{position:static;bottom:0;right:0;margin:auto;text-align:center}[data-ea-style=stickybox].loaded .ea-stickybox-hide{display:none}}@media(min-width: 1301px){[data-ea-style=stickybox].loaded .ea-type-image .ea-content{background:#dcdcdc}[data-ea-style=stickybox].loaded.dark .ea-type-image .ea-content{background:#505050}}@media(min-width: 1301px)and (prefers-color-scheme: dark){[data-ea-style=stickybox].loaded.adaptive .ea-type-image .ea-content{background:#505050}}[data-ea-style=fixedfooter].loaded{position:fixed;bottom:0;left:0;z-index:200;width:100%;max-width:100%}[data-ea-style=fixedfooter].loaded .ea-type-text{width:100%;max-width:100%;display:flex;z-index:200;background:#dcdcdc}[data-ea-style=fixedfooter].loaded .ea-type-text .ea-content{border:0px;border-radius:3px;box-shadow:none}[data-ea-style=fixedfooter].loaded .ea-type-text .ea-content{background-color:inherit;max-width:100%;margin:0;padding:1em;flex:auto}[data-ea-style=fixedfooter].loaded .ea-type-text .ea-callout{max-width:100%;margin:0;padding:1em;flex:initial}@media(max-width: 576px){[data-ea-style=fixedfooter].loaded .ea-type-text .ea-callout{display:none}}[data-ea-style=fixedfooter].loaded .ea-type-text .ea-fixedfooter-hide{cursor:pointer;color:#505050;padding:1em;flex:initial;margin:auto 0}[data-ea-style=fixedfooter].loaded .ea-type-text .ea-fixedfooter-hide span{padding:.25em;font-size:.8em;font-weight:bold;border:.15em solid #505050;border-radius:.5em;white-space:nowrap}[data-ea-style=fixedfooter].loaded.dark .ea-type-text{background:#505050}[data-ea-style=fixedfooter].loaded.dark .ea-type-text .ea-fixedfooter-hide span{color:#dcdcdc;border-color:#dcdcdc}@media(prefers-color-scheme: dark){[data-ea-style=fixedfooter].loaded.adaptive .ea-type-text{background:#505050}[data-ea-style=fixedfooter].loaded.adaptive .ea-type-text .ea-fixedfooter-hide span{color:#dcdcdc;border-color:#dcdcdc}}</style><script src="./Shaders and Rendering — pyglet v2.1.6_files/saved_resource" type="text/javascript" async=""></script></head>
+
+<body class="wy-body-for-nav" data-new-gr-c-s-check-loaded="14.1104.0" data-gr-ext-installed=""> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+
+          
+          
+          <a href="https://pyglet.readthedocs.io/en/latest/index.html" class="icon icon-home">
+            pyglet
+              <img src="./Shaders and Rendering — pyglet v2.1.6_files/logo.webp" class="logo" alt="Logo">
+          </a>
+              <div class="version">
+                2.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="https://pyglet.readthedocs.io/en/latest/search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs">
+    <input type="hidden" name="check_keywords" value="yes">
+    <input type="hidden" name="area" value="default">
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Programming Guide</span></p>
+<ul class="current" aria-expanded="true">
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/quickstart.html">Writing a pyglet application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/windowing.html">Windowing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/keyboard.html">Keyboard input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/mouse.html">Mouse input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/input.html">Controller &amp; Joystick input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/image.html">Images and Sprites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/text.html">Displaying text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/media.html">Playing Sound and Video</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/shapes.html">Drawing Shapes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/models.html">3D Models and Scenes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/resources.html">Application resources</a></li>
+<li class="toctree-l1 current" aria-expanded="true"><a class="reference internal current" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#" aria-expanded="true"><button class="toctree-expand" title="Open/close menu"></button>Shaders and Rendering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#working-with-shaders"><button class="toctree-expand" title="Open/close menu"></button>Working with Shaders</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#creating-a-shader-program">Creating a Shader Program</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#uniforms">Uniforms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#uniform-blocks-and-uniform-buffer-objects">Uniform Blocks and Uniform Buffer Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#creating-vertex-lists"><button class="toctree-expand" title="Open/close menu"></button>Creating Vertex Lists</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#passing-initial-data">Passing Initial Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#indexed-rendering">Indexed Rendering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#resource-management">Resource Management</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#batched-rendering"><button class="toctree-expand" title="Open/close menu"></button>Batched rendering</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#setting-the-opengl-state">Setting the OpenGL state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#shader-state">Shader state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#hierarchical-state">Hierarchical state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#drawing-order">Drawing order</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#visibility">Visibility</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#batches-and-groups-in-other-modules">Batches and groups in other modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/events.html">Event dispatching &amp; handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/gui.html">Simple Widgets &amp; GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/time.html">Keeping track of time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/context.html">Creating an OpenGL context</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/gl.html">The OpenGL interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/opengles.html">OpenGL ES</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/math.html">Matrix and Vector Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/eventloop.html">The application event loop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/examplegame.html">In-depth game example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/options.html">Runtime Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/debug.html">Debugging tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/migration.html">Migrating from pyglet 2.0</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/pyglet.html">pyglet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/app.html">pyglet.app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/clock.html">pyglet.clock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/display.html">pyglet.display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/customtypes.html">pyglet.customtypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/event.html">pyglet.event</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/font.html">pyglet.font</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/font.html#module-pyglet.font.user">pyglet.font.user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/gl.html">pyglet.gl</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html">pyglet.graphics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/gui.html">pyglet.gui</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/image/index.html">pyglet.image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/info.html">pyglet.info</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/input.html">pyglet.input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/math.html">pyglet.math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/media.html">pyglet.media</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/resource.html">pyglet.resource</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/sprite.html">pyglet.sprite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/shapes.html">pyglet.shapes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/text/index.html">pyglet.text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/window.html">pyglet.window</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">External Resources</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/external_resources.html">Related Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/external_resources.html#projects-using-pyglet">Projects using pyglet</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/virtualenv.html">Development environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/doc.html">Documentation and Type Hints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/testing.html">Testing pyglet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/dist.html">Making a pyglet release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/gl.html">OpenGL Interface Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/generated.html">ctypes Wrapper Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/wraptypes.html">wraptypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/media_manual.html">Media manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/internal/media_logging_manual.html">Media logging manual</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="https://pyglet.readthedocs.io/en/latest/index.html">pyglet</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="https://pyglet.readthedocs.io/en/latest/index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Shaders and Rendering</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="shaders-and-rendering">
+<span id="guide-graphics"></span><h1>Shaders and Rendering<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#shaders-and-rendering" title="Permalink to this heading"></a></h1>
+<p>At the lowest level, pyglet uses OpenGL to draw graphics in program windows.
+The OpenGL interface is exposed via the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/gl.html#module-pyglet.gl" title="pyglet.gl"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyglet.gl</span></code></a> module
+(see <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/gl.html#guide-gl"><span class="std std-ref">The OpenGL interface</span></a>)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you intend to use OpenGL ES with pyglet on devices like the Raspberry
+Pi, please read the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/programming_guide/opengles.html#programming-guide-opengles"><span class="std std-ref">OpenGL ES</span></a> section first.</p>
+</div>
+<p>For new users, however, using the OpenGL interface directly can be daunting.
+The <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#module-pyglet.graphics" title="pyglet.graphics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyglet.graphics</span></code></a> module provides high level abstractions that
+use vertex arrays and vertex buffer objects internally to deliver high
+performance. For advanced users, these abstractions can still help to avoid
+a lot of the OpenGL boilerplate code that would otherwise be necessary to write
+yourself.</p>
+<p>pyglet’s rendering abstractions consist of three major components:
+“VertexDomains”, “VertexLists”, and “<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>”. These will be explained
+in more detail in the following sections, but a rough overview is as follows:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a> are at the highest level, and are simple abstractions over
+standard OpenGL Shader Programs. pyglet does full attribute and uniform
+introspection, and provides methods for automatically generating buffers
+that match the attribute formats.</p></li>
+<li><p>VertexDomains at at the lowest level, and users will generally not need to
+interact with them directly. They maintain ownership of raw OpenGL vertex
+array buffers, that match a specific collection of vertex attributes.
+Buffers are resized automatically as needed. Access to these buffers is
+usually not done directly, but instead through the use of VertexLists.</p></li>
+<li><p>VertexLists sit in-between the VertexDomains and the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>. They
+provide a simple “view” into a portion of a VertexDomain’s buffers. A
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a> is able to generate VertexLists directly.</p></li>
+</ul>
+<p>In summary, the process is as follows:</p>
+<ol class="arabic simple">
+<li><p>User creates a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>. Vertex attribute metadata is introspected
+automatically.</p></li>
+<li><p>User creates a new VertexList with the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram.vertex_list" title="pyglet.graphics.shader.ShaderProgram.vertex_list"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vertex_list()</span></code></a> method.
+Users do not need to worry about creating the internal buffers themselves.</p></li>
+<li><p>When the VertexList is created in step 2, pyglet automatically matches the
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>’s attributes to an appropriate VertexDomain. (If no existing
+domain is available, a new one is created). A VertexList is generated from
+the matching VertexDomain, and returned.</p></li>
+</ol>
+<section id="working-with-shaders">
+<h2>Working with Shaders<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#working-with-shaders" title="Permalink to this heading"></a></h2>
+<p>Drawing anything in modern OpenGL requires a Shader Program. Working with
+Shader resources directly can be tedious, so the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#module-pyglet.graphics.shader" title="pyglet.graphics.shader"><code class="xref py py-mod docutils literal notranslate"><span class="pre">pyglet.graphics.shader</span></code></a>
+module provides simplified (but robust) abstractions.</p>
+<p>See the <a class="reference external" href="http://www.opengl.org/sdk">OpenGL Programming SDK</a> for more information on Shaders and the
+OpenGL Shader Language (GLSL).</p>
+<section id="creating-a-shader-program">
+<h3>Creating a Shader Program<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#creating-a-shader-program" title="Permalink to this heading"></a></h3>
+<p>To create a Shader Program, first prepare the GLSL source as Python strings.
+This can be loaded from disk, or simply defined inside of your project. Here
+is simplistic Vertex and Fragment source:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vertex_source</span> <span class="o">=</span> <span class="s2">"""#version 150 core</span>
+<span class="s2">    in vec2 position;</span>
+<span class="s2">    in vec4 colors;</span>
+<span class="s2">    out vec4 vertex_colors;</span>
+
+<span class="s2">    uniform WindowBlock</span>
+<span class="s2">    {</span>
+<span class="s2">        mat4 projection;</span>
+<span class="s2">        mat4 view;</span>
+<span class="s2">    } window;</span>
+
+<span class="s2">    void main()</span>
+<span class="s2">    {</span>
+<span class="s2">        gl_Position = window.projection * window.view * vec4(position, 0.0, 1.0);</span>
+<span class="s2">        vertex_colors = colors;</span>
+<span class="s2">    }</span>
+<span class="s2">"""</span>
+
+<span class="n">fragment_source</span> <span class="o">=</span> <span class="s2">"""#version 150 core</span>
+<span class="s2">    in vec4 vertex_colors;</span>
+<span class="s2">    out vec4 final_color;</span>
+
+<span class="s2">    void main()</span>
+<span class="s2">    {</span>
+<span class="s2">        final_color = vertex_colors;</span>
+<span class="s2">    }</span>
+<span class="s2">"""</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default, pyglet includes and sets the <code class="docutils literal notranslate"><span class="pre">WindowBlock</span></code> uniform when the window is created. If you do not use
+the <code class="docutils literal notranslate"><span class="pre">window.projection</span></code> or <code class="docutils literal notranslate"><span class="pre">window.view</span></code> in your vertex shader, you will have to manage the projection
+yourself or your graphics may not display properly.</p>
+</div>
+<p>The source strings are then used to create <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.Shader" title="pyglet.graphics.shader.Shader"><code class="xref py py-class docutils literal notranslate"><span class="pre">Shader</span></code></a> objects, which are
+then linked together in a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>. Shader objects are automatically
+detached after linking the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>, so they can be discarded
+afterwards (or used again in other <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyglet.graphics.shader</span><span class="w"> </span><span class="kn">import</span> <span class="n">Shader</span><span class="p">,</span> <span class="n">ShaderProgram</span>
+
+<span class="n">vert_shader</span> <span class="o">=</span> <span class="n">Shader</span><span class="p">(</span><span class="n">vertex_source</span><span class="p">,</span> <span class="s1">'vertex'</span><span class="p">)</span>
+<span class="n">frag_shader</span> <span class="o">=</span> <span class="n">Shader</span><span class="p">(</span><span class="n">fragment_source</span><span class="p">,</span> <span class="s1">'fragment'</span><span class="p">)</span>
+<span class="n">program</span> <span class="o">=</span> <span class="n">ShaderProgram</span><span class="p">(</span><span class="n">vert_shader</span><span class="p">,</span> <span class="n">frag_shader</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a> internally introspects on creation. There are
+several properties that can be queried to inspect the various vertex attributes, uniforms,
+and uniform blocks that are available. For example, the <cite>uniforms</cite> and <cite>attributes</cite> properties
+will return dictionaries showing the metadata for these objects:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="n">program</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">attribute</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">('position', {'type': 35664, 'size': 1, 'location': 0, 'count': 2, 'format': 'f'})</span>
+<span class="go">('colors', {'type': 35666, 'size': 1, 'location': 1, 'count': 4, 'format': 'f'})</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">uniform</span> <span class="ow">in</span> <span class="n">program</span><span class="o">.</span><span class="n">uniforms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">uniform</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">('time', {'location': 2, 'length': 1, 'size': 1})</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Most OpenGL drivers will optimize shaders during compilation. If an
+attribute or a uniform is not being used, it will often be optimized out.</p>
+</div>
+</section>
+<section id="uniforms">
+<h3>Uniforms<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#uniforms" title="Permalink to this heading"></a></h3>
+<p>Uniforms are variables that can be modified after a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a> has been compiled
+to change functionality during run time.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When setting uniforms, the program must be binded at the time of setting. This restriction does not exist in
+OpenGL 4.1+, but if you plan to support older contexts (such as 3.3), this must be accounted for.</p>
+</div>
+<p>Uniforms can be accessed as a key on the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>
+itself. For example if your uniform in your shader is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uniform</span> <span class="nb">float</span> <span class="n">time</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Then you can set (or get) the value using the uniform name as a key:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">program</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta_time</span>
+</pre></div>
+</div>
+</section>
+<section id="uniform-blocks-and-uniform-buffer-objects">
+<h3>Uniform Blocks and Uniform Buffer Objects<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#uniform-blocks-and-uniform-buffer-objects" title="Permalink to this heading"></a></h3>
+<p>Pyglet also introspects and makes Uniform Blocks (or Interface Blocks) available, including ways to manage and use Uniform Buffer Objects.</p>
+<p>By default, Pyglet’s <code class="docutils literal notranslate"><span class="pre">projection</span></code> and <code class="docutils literal notranslate"><span class="pre">view</span></code> matrix are both contained in the <code class="docutils literal notranslate"><span class="pre">WindowBlock</span></code> uniform block. Which looks like this in the vertex shader:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uniform</span> <span class="n">WindowBlock</span>
+<span class="p">{</span>
+    <span class="n">mat4</span> <span class="n">projection</span><span class="p">;</span>
+    <span class="n">mat4</span> <span class="n">view</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">window</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>You can view what uniform blocks exist in a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a> using the <cite>uniform_blocks</cite>
+property. This is a dictionary containing a Uniform Block name key to a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBlock" title="pyglet.graphics.shader.UniformBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformBlock</span></code></a>
+object value. In the above example, the name would be <code class="docutils literal notranslate"><span class="pre">WindowBlock</span></code> while the <code class="docutils literal notranslate"><span class="pre">window</span></code> instance identifier is used in the GLSL shader itself.</p>
+<p>Normally with OpenGL, you would have to manually assign a global binding point value to each Uniform Block for each Shader Program, as they are created. With Pyglet, the global binding values and assignments are all taken care of internally.</p>
+<p>Uniform Blocks can be a convenient way to update uniforms of multiple Shader Programs at once, as their data is shared. This allows you to access the same information from multiple Shader Programs without having to bind every program using it, just to modify the uniform values. This can be achieved through a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBufferObject" title="pyglet.graphics.shader.UniformBufferObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformBufferObject</span></code></a>.</p>
+<p>To modify the uniforms in a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBlock" title="pyglet.graphics.shader.UniformBlock"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformBlock</span></code></a>, you must first create a
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBufferObject" title="pyglet.graphics.shader.UniformBufferObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformBufferObject</span></code></a> using the
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBlock.create_ubo" title="pyglet.graphics.shader.UniformBlock.create_ubo"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_ubo()</span></code></a> method.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ubo</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">uniform_blocks</span><span class="p">[</span><span class="s1">'WindowBlock'</span><span class="p">]</span><span class="o">.</span><span class="n">create_ubo</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBufferObject" title="pyglet.graphics.shader.UniformBufferObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformBufferObject</span></code></a> can then be used as a context manager for easy
+access to update its uniforms:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">ubo</span> <span class="k">as</span> <span class="n">window_block</span><span class="p">:</span>
+    <span class="n">window_block</span><span class="o">.</span><span class="n">projection</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">new_matrix</span>
+</pre></div>
+</div>
+<p>You can also create multiple <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBufferObject" title="pyglet.graphics.shader.UniformBufferObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformBufferObject</span></code></a> instances if you need to swap between different sets of data. Calling <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBufferObject.bind" title="pyglet.graphics.shader.UniformBufferObject.bind"><code class="xref py py-meth docutils literal notranslate"><span class="pre">bind()</span></code></a> will bind the buffers data to the associated binding point.</p>
+<p>There may come a point where you don’t want a specific <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>, or a group of them, to use the same uniform data set as the rest of your shaders. At this point, you will have to modify the binding point of those Uniform Blocks to one that is unused. This can be done through <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBlock.set_binding" title="pyglet.graphics.shader.UniformBlock.set_binding"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_binding()</span></code></a>. Once the binding has been set, you will have to create a new <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBufferObject" title="pyglet.graphics.shader.UniformBufferObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformBufferObject</span></code></a> using the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.UniformBlock.create_ubo" title="pyglet.graphics.shader.UniformBlock.create_ubo"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_ubo()</span></code></a> method again and supply it with your new data set.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When assigning custom binding points through py:meth:<cite>~pyglet.graphics.shader.UniformBlock.set_binding</cite>, it is recommended to use an unassigned binding point, as unexpected behavior may occur. A warning will be output if such a collision occurs.</p>
+<p>The maximum binding point value is determined by the hardware. This can be retrieved by calling <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.get_maximum_binding_count" title="pyglet.graphics.shader.get_maximum_binding_count"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_maximum_binding_count()</span></code></a>. It is recommended to use a number
+higher than the amount of Uniform Blocks in your application to prevent collisions.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Binding point 0 cannot be set, as it is used internally for <code class="docutils literal notranslate"><span class="pre">WindowBlock</span></code>.</p>
+</div>
+</section>
+<section id="creating-vertex-lists">
+<h3>Creating Vertex Lists<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#creating-vertex-lists" title="Permalink to this heading"></a></h3>
+<p>Once you have a ShaderProgram, you need vertex data to render. As an easier alternative
+to manually creating and managing vertex buffers, pyglet provides a high level
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/vertexdomain.html#pyglet.graphics.vertexdomain.VertexList" title="pyglet.graphics.vertexdomain.VertexList"><code class="xref py py-class docutils literal notranslate"><span class="pre">VertexList</span></code></a> object. VertexLists are abstractions
+over OpenGL buffers, with properties for easily accessing the arrays of attribute data.</p>
+<p>The ShaderProgram provides the following two methods:
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram.vertex_list" title="pyglet.graphics.shader.ShaderProgram.vertex_list"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vertex_list()</span></code></a>
+and
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram.vertex_list_indexed" title="pyglet.graphics.shader.ShaderProgram.vertex_list_indexed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vertex_list_indexed()</span></code></a></p>
+<p>At a minimum, you must provide a <cite>count</cite> and <cite>mode</cite> when creating a VertexList.
+The <cite>count</cite> is simply the number of vertices you wish to create. The <cite>mode</cite> is
+the OpenGL primitive type. A <code class="docutils literal notranslate"><span class="pre">group</span></code> and <code class="docutils literal notranslate"><span class="pre">batch</span></code> parameters are also accepted
+(described below).</p>
+<p>The mode should be passed using one of the following constants:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pyglet.gl.GL_POINTS</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pyglet.gl.GL_LINES</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pyglet.gl.GL_LINE_STRIP</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pyglet.gl.GL_TRIANGLES</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pyglet.gl.GL_TRIANGLE_STRIP</span></code></p></li>
+</ul>
+<p>When using <code class="docutils literal notranslate"><span class="pre">GL_LINE_STRIP</span></code> and <code class="docutils literal notranslate"><span class="pre">GL_TRIANGLE_STRIP</span></code>, care must be taken to
+insert degenerate vertices at the beginning and end of each vertex list.
+For example, given the vertex list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span>
+</pre></div>
+</div>
+<p>the correct vertex list to provide the vertex list is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">D</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Because of the way the high level API renders multiple primitives with
+shared state, <code class="docutils literal notranslate"><span class="pre">GL_POLYGON</span></code>, <code class="docutils literal notranslate"><span class="pre">GL_LINE_LOOP</span></code> and <code class="docutils literal notranslate"><span class="pre">GL_TRIANGLE_FAN</span></code>
+cannot be used — the results are undefined.</p>
+</div>
+<p>Create a VertexList with three vertices, without initial data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vlist</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">vertex_list</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLES</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>From examining the ShaderProgram.attributes above, we know <cite>position</cite> and <cite>colors</cite>
+attributes are available. The underlying arrays can be accessed directly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vlist</span><span class="o">.</span><span class="n">position</span>
+<span class="go">&lt;pyglet.graphics.shader.c_float_Array_6 object at 0x7f6d3a30b1c0&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vlist</span><span class="o">.</span><span class="n">colors</span>
+<span class="go">&lt;pyglet.graphics.shader.c_float_Array_12 object at 0x7f6d3a30b0c0&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vlist</span><span class="o">.</span><span class="n">position</span><span class="p">[:]</span>
+<span class="go">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vlist</span><span class="o">.</span><span class="n">colors</span><span class="p">[:]</span>
+<span class="go">[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+</pre></div>
+</div>
+<p>The <cite>position</cite> data is a float array with 6 elements. This attribute is a <cite>vec2</cite>
+in the shader. Looking at the attribute metadata above, we can confirm that
+<cite>count=2</cite>. Since the VertexList was created with 3 vertices, the length of the array
+is simply 3 * 2 = 6.  Likewise, the <cite>colors</cite> attribute is defined as a <cite>vec4</cite> in the
+shader, so it’s simply 3 * 4 = 12.</p>
+<p>This VertexList was created without any initial data, but it can be set (or updated)
+on the property by passing a list or tuple of the correct length. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vlist</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">350</span><span class="p">)</span>
+<span class="c1"># or slightly faster to update in-place:</span>
+<span class="n">vlist</span><span class="o">.</span><span class="n">position</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">350</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The default data format is single precision floats, but it is possible to specify a
+format using a “format string”. This is passed on creation as a Python keyword
+argument. The following formats are available:</p>
+<div class="wy-table-responsive"><table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Format</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Python type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"b"</span></code></p></td>
+<td><p>Signed byte</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"B"</span></code></p></td>
+<td><p>Unsigned byte</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"s"</span></code></p></td>
+<td><p>Signed short</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"S"</span></code></p></td>
+<td><p>Unsigned short</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"i"</span></code></p></td>
+<td><p>Signed int</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"I"</span></code></p></td>
+<td><p>Unsigned int</p></td>
+<td><p>int</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">"f"</span></code></p></td>
+<td><p>Single precision float</p></td>
+<td><p>float</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">"d"</span></code></p></td>
+<td><p>Double precision float</p></td>
+<td><p>float</p></td>
+</tr>
+</tbody>
+</table></div>
+<p>For example, if you would like to pass the <cite>position</cite> data as a signed int, you
+can pass the “i” format string as a Python keyword argument:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vlist</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">vertex_list</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="s1">'i'</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By appending <code class="docutils literal notranslate"><span class="pre">"n"</span></code> to the format string, you can also specify that the passed
+data should be “normalized” to the range <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>. The value is used as-is if
+the data type is floating-point. If the data type is byte, short or int, the value
+is divided by the maximum value representable by that type.  For example, unsigned
+bytes are divided by 255 to get the normalised value.</p>
+<p>A common case is to use normalized unsigned bytes for the color data. Simply
+pass “Bn” as the format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vlist</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">vertex_list</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="s1">'Bn'</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="passing-initial-data">
+<h4>Passing Initial Data<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#passing-initial-data" title="Permalink to this heading"></a></h4>
+<p>Rather than setting the data <em>after</em> creation of a VertexList, you can also
+easily pass initial arrays of data on creation. You do this by passing the format
+and the data as a tuple, using a keyword argument as above. To set the position
+and color data on creation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vlist</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">vertex_list</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLES</span><span class="p">,</span>
+                            <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="s1">'f'</span><span class="p">,</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">350</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">450</span><span class="p">)),</span>
+                            <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="s1">'Bn'</span><span class="p">,</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span>  <span class="mi">75</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">),)</span>
+</pre></div>
+</div>
+</section>
+<section id="indexed-rendering">
+<h4>Indexed Rendering<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#indexed-rendering" title="Permalink to this heading"></a></h4>
+<p>Vertices can also be drawn out of order and more than once by using the
+indexed rendering. This requires a list of integers giving the indices into
+the vertex data. You also use the
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram.vertex_list_indexed" title="pyglet.graphics.shader.ShaderProgram.vertex_list_indexed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vertex_list_indexed()</span></code></a> method
+instead of <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram.vertex_list" title="pyglet.graphics.shader.ShaderProgram.vertex_list"><code class="xref py py-meth docutils literal notranslate"><span class="pre">vertex_list()</span></code></a>. The
+API is almost identical, except for the required index list.</p>
+<p>The following example creates four vertices, and provides their positional data.
+By passing an index list of [0, 1, 2, 0, 2, 3], we creates two adjacent triangles,
+and the shared vertices are reused:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vlist</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">vertex_list_indexed</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLES</span><span class="p">,</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="s1">'i'</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="mi">150</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span>  <span class="mi">150</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span>  <span class="mi">100</span><span class="p">,</span> <span class="mi">150</span><span class="p">)),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the first argument gives the number of vertices in the data, not the
+number of indices (which is implicit on the length of the index list given in
+the third argument).</p>
+</section>
+<section id="resource-management">
+<h4>Resource Management<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#resource-management" title="Permalink to this heading"></a></h4>
+<p>VertexLists reference data that is stored on the GPU, but they do not own
+any data themselves. For this reason, it’s not strictly necessary to keep a
+reference to a VertexList after creating it. If you wish to delete the data
+from the GPU, however, it can only be done with the <cite>VertexList.delete()</cite>
+method. Likewise, you can only update a VertexList’s vertex data if you have
+kept a reference to it. For that reason, you should keep a reference to any
+objects that you might want to modify or delete from your scene after creation.</p>
+</section>
+</section>
+</section>
+<section id="batched-rendering">
+<span id="guide-batched-rendering"></span><h2>Batched rendering<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#batched-rendering" title="Permalink to this heading"></a></h2>
+<p>For optimal OpenGL performance, you should render as many vertex lists as
+possible in a single <code class="docutils literal notranslate"><span class="pre">draw</span></code> call.  Internally, pyglet uses
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/vertexdomain.html#pyglet.graphics.vertexdomain.VertexDomain" title="pyglet.graphics.vertexdomain.VertexDomain"><code class="xref py py-class docutils literal notranslate"><span class="pre">VertexDomain</span></code></a> and
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/vertexdomain.html#pyglet.graphics.vertexdomain.IndexedVertexDomain" title="pyglet.graphics.vertexdomain.IndexedVertexDomain"><code class="xref py py-class docutils literal notranslate"><span class="pre">IndexedVertexDomain</span></code></a> to keep VertexLists
+that share the same attribute formats in adjacent areas of memory.
+The entire domain of vertex lists can then be drawn at once, without calling
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/vertexdomain.html#pyglet.graphics.vertexdomain.VertexList.draw" title="pyglet.graphics.vertexdomain.VertexList.draw"><code class="xref py py-meth docutils literal notranslate"><span class="pre">draw()</span></code></a> on each individual
+list.</p>
+<p>It is quite difficult and tedious to write an application that manages vertex
+domains itself, though.  In addition to maintaining a vertex domain for each
+ShaderProgram and set of attribute formats, domains must also be separated by
+primitive mode and required OpenGL state.</p>
+<p>The <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Batch" title="pyglet.graphics.Batch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></a> class implements this functionality,
+grouping related vertex lists together and sorting by OpenGL state
+automatically. A batch is created with no arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">batch</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Batch</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To use a Batch, you simply pass it as a (keyword) argument when creating
+any of pyglet’s high level objects. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vlist</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">vertex_list</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+<span class="n">sprite</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To draw all objects contained in the batch at once:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">batch</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For batches containing many objects, this gives a significant performance
+improvement over drawing individually. It’s generally recommended to always
+use Batches.</p>
+<section id="setting-the-opengl-state">
+<h3>Setting the OpenGL state<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#setting-the-opengl-state" title="Permalink to this heading"></a></h3>
+<p>Before drawing in OpenGL, it’s necessary to set certain state. You might need
+to activate a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a>, or bind a Texture. For example, to enable and bind
+a texture requires the following before drawing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyglet.gl</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="n">glActiveTexture</span><span class="p">(</span><span class="n">GL_TEXTURE0</span><span class="p">)</span>
+<span class="n">glBindTexture</span><span class="p">(</span><span class="n">texture</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">texture</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>With a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Group" title="pyglet.graphics.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a> these state changes can be
+encapsulated and associated with the vertex lists they affect.
+Subclass <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Group" title="pyglet.graphics.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a> and override the <cite>Group.set_state</cite>
+and <cite>Group.unset_state</cite> methods to perform the required state changes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CustomGroup</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texture</span><span class="p">,</span> <span class="n">shaderprogram</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">texture</span> <span class="o">=</span> <span class="n">texture</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">program</span> <span class="o">=</span> <span class="n">shaderprogram</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">use</span><span class="p">()</span>
+        <span class="n">glActiveTexture</span><span class="p">(</span><span class="n">GL_TEXTURE0</span><span class="p">)</span>
+        <span class="n">glBindTexture</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">unset_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">program</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>An instance of this group can now be attached to vertex lists:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">custom_group</span> <span class="o">=</span> <span class="n">CustomGroup</span><span class="p">()</span>
+<span class="n">vertex_list</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">vertex_list</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">gl</span><span class="o">.</span><span class="n">GL_POINTS</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">custom_group</span><span class="p">,</span>
+    <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="s1">'i'</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">)),</span>
+    <span class="n">colors</span><span class="o">=</span><span class="p">(</span><span class="s1">'Bn'</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Batch" title="pyglet.graphics.Batch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></a> ensures that the appropriate
+<code class="docutils literal notranslate"><span class="pre">set_state</span></code> and <code class="docutils literal notranslate"><span class="pre">unset_state</span></code> methods are called before and after
+the vertex lists that use them.</p>
+</section>
+<section id="shader-state">
+<h3>Shader state<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#shader-state" title="Permalink to this heading"></a></h3>
+<p><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a> can be binded (<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram.use" title="pyglet.graphics.shader.ShaderProgram.use"><code class="xref py py-meth docutils literal notranslate"><span class="pre">use()</span></code></a>)
+and unbinded (<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram.stop" title="pyglet.graphics.shader.ShaderProgram.stop"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stop()</span></code></a>) manually. As a convenience method, it can also act
+as a context manager that handles the binding and unbinding process automatically. This may be useful if you want to
+ensure the state of a <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/shader.html#pyglet.graphics.shader.ShaderProgram" title="pyglet.graphics.shader.ShaderProgram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ShaderProgram</span></code></a> is active during some edge case scenarios while
+also being more Pythonic.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">shaderprogram</span> <span class="k">as</span> <span class="n">my_shader</span><span class="p">:</span>
+    <span class="n">my_shader</span><span class="o">.</span><span class="n">my_uniform</span> <span class="o">=</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+</section>
+<section id="hierarchical-state">
+<h3>Hierarchical state<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#hierarchical-state" title="Permalink to this heading"></a></h3>
+<p>Groups have a <cite>parent</cite> attribute that allows them to be implicitly organised
+in a tree structure.  If groups <strong>B</strong> and <strong>C</strong> have parent <strong>A</strong>, then the
+order of <code class="docutils literal notranslate"><span class="pre">set_state</span></code> and <code class="docutils literal notranslate"><span class="pre">unset_state</span></code> calls for vertex lists in a batch
+will be:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">set_state</span><span class="p">()</span>
+
+  <span class="n">B</span><span class="o">.</span><span class="n">set_state</span><span class="p">()</span>
+  <span class="c1"># Draw B vertices</span>
+  <span class="n">B</span><span class="o">.</span><span class="n">unset_state</span><span class="p">()</span>
+
+  <span class="n">C</span><span class="o">.</span><span class="n">set_state</span><span class="p">()</span>
+  <span class="c1"># Draw C vertices</span>
+  <span class="n">C</span><span class="o">.</span><span class="n">unset_state</span><span class="p">()</span>
+
+<span class="n">A</span><span class="o">.</span><span class="n">unset_state</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This is useful to group state changes into as few calls as possible.  For
+example, if you have a number of vertex lists that all need texturing enabled,
+but have different bound textures, you could enable and disable texturing in
+the parent group and bind each texture in the child groups.  The following
+example demonstrates this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">TextureEnableGroup</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">glActiveTexture</span><span class="p">(</span><span class="n">GL_TEXTURE0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">unset_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># not necessary</span>
+
+
+<span class="n">texture_enable_group</span> <span class="o">=</span> <span class="n">TextureEnableGroup</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TextureBindGroup</span><span class="p">(</span><span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texture</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">texture_enable_group</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">texture</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">GL_TEXTURE_2D</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">texture</span> <span class="o">=</span> <span class="n">texture</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">glBindTexture</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">unset_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># not required</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">target</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">target</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">texture</span><span class="o">.</span><span class="n">target</span><span class="p">))</span>
+
+<span class="n">program</span><span class="o">.</span><span class="n">vertex_list_indexed</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">TextureBindGroup</span><span class="p">(</span><span class="n">texture1</span><span class="p">))</span>
+<span class="n">program</span><span class="o">.</span><span class="n">vertex_list_indexed</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">TextureBindGroup</span><span class="p">(</span><span class="n">texture2</span><span class="p">))</span>
+<span class="n">program</span><span class="o">.</span><span class="n">vertex_list_indexed</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">GL_TRIANGLES</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">TextureBindGroup</span><span class="p">(</span><span class="n">texture1</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> method on the group allows the <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Batch" title="pyglet.graphics.Batch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></a>
+to automatically merge the two identical <code class="docutils literal notranslate"><span class="pre">TextureBindGroup</span></code> instances.
+For optimal performance, always take care to ensure your custom Groups have
+correct <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> and <code class="docutils literal notranslate"><span class="pre">__hash__</span></code> methods defined.</p>
+</div>
+</section>
+<section id="drawing-order">
+<h3>Drawing order<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#drawing-order" title="Permalink to this heading"></a></h3>
+<p><a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/vertexdomain.html#pyglet.graphics.vertexdomain.VertexDomain" title="pyglet.graphics.vertexdomain.VertexDomain"><code class="xref py py-class docutils literal notranslate"><span class="pre">VertexDomain</span></code></a> does not attempt
+to keep vertex lists in any particular order. So, any vertex lists sharing
+the same primitive mode, attribute formats and group will be drawn in an
+arbitrary order.  However, <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Group" title="pyglet.graphics.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a> objects do
+have an <code class="docutils literal notranslate"><span class="pre">order</span></code> parameter that allows <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Batch" title="pyglet.graphics.Batch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></a>
+to sort objects sharing the same parent. In summary, inside of a Batch:</p>
+<ol class="arabic simple">
+<li><p>Groups are sorted by their parent (if any). (Parent Groups may also be ordered).</p></li>
+<li><p>Groups are sorted by their <cite>order</cite> attribute. There is one draw call per order level.</p></li>
+</ol>
+<p>A common use pattern is to create several Groups for each level in your scene.
+For instance, a “background” group that is drawn before the “foreground” group:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">background</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">foreground</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">background</span><span class="p">)</span>
+<span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">foreground</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By combining hierarchical groups with ordered groups it is possible to
+describe an entire scene within a single <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Batch" title="pyglet.graphics.Batch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Batch</span></code></a>,
+which then renders it as efficiently as possible.</p>
+</section>
+<section id="visibility">
+<h3>Visibility<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#visibility" title="Permalink to this heading"></a></h3>
+<p>Groups have a boolean <code class="docutils literal notranslate"><span class="pre">visible</span></code> property. By setting this to <code class="docutils literal notranslate"><span class="pre">False</span></code>, any
+objects in that <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/graphics/index.html#pyglet.graphics.Group" title="pyglet.graphics.Group"><code class="xref py py-class docutils literal notranslate"><span class="pre">Group</span></code></a> will no longer be rendered. A common use case is to
+create a parent Group specifically for this purpose, often when combined
+with custom ordering (as described above). For example, you might create
+a “HUD” Group, which is ordered to draw in front of everything else. The
+“HUD” Group’s visibility can then easily be toggled.</p>
+</section>
+</section>
+<section id="batches-and-groups-in-other-modules">
+<h2>Batches and groups in other modules<a class="headerlink" href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html#batches-and-groups-in-other-modules" title="Permalink to this heading"></a></h2>
+<p>The <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/sprite.html#pyglet.sprite.Sprite" title="pyglet.sprite.Sprite"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sprite</span></code></a>, <a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/text/index.html#pyglet.text.Label" title="pyglet.text.Label"><code class="xref py py-class docutils literal notranslate"><span class="pre">Label</span></code></a>,
+<a class="reference internal" href="https://pyglet.readthedocs.io/en/latest/modules/text/layout.html#pyglet.text.layout.TextLayout" title="pyglet.text.layout.TextLayout"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextLayout</span></code></a>, and other default classes all
+accept <code class="docutils literal notranslate"><span class="pre">batch</span></code> and <code class="docutils literal notranslate"><span class="pre">group</span></code> parameters in their constructors. This allows
+you to add any of these higher-level pyglet drawables into arbitrary places in
+your rendering code.</p>
+<p>For example, multiple sprites can be grouped into a single batch and then
+drawn at once, instead of calling <code class="docutils literal notranslate"><span class="pre">Sprite.draw()</span></code> on each one individually:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">batch</span> <span class="o">=</span> <span class="n">pyglet</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">Batch</span><span class="p">()</span>
+<span class="n">sprites</span> <span class="o">=</span> <span class="p">[</span><span class="n">pyglet</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
+
+<span class="n">batch</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">group</span></code> parameter can be used to set the drawing order (and hence which
+objects overlap others) within a single batch, as described on the previous page.</p>
+<p>In general you should batch all drawing objects into as few batches as
+possible, and use groups to manage the draw order and other OpenGL state
+changes for optimal performance.</p>
+<p>If you are creating your own drawable
+classes, consider adding <code class="docutils literal notranslate"><span class="pre">batch</span></code> and <code class="docutils literal notranslate"><span class="pre">group</span></code> parameters in a similar way.</p>
+</section>
+</section>
+
+
+           </div>
+          <div id="readthedocs-ea-text-footer" class="raised loaded" data-ea-type="text" data-ea-manual="true" data-ea-publisher="readthedocs" data-ea-keywords="python|readthedocs-project-25735|readthedocs-project-pyglet" data-ea-campaign-types="community|house|paid"><div class="ea-placement ea-type-text"><div class="ea-content"><div class="ea-text"><a href="https://server.ethicalads.io/proxy/click/8640/01970042-bbb9-7d50-a891-79b66a07cc43/" rel="nofollow noopener sponsored" target="_blank"><strong class="ea-headline">Simplify infrastructure </strong><span class="ea-body">with MongoDB Atlas, the leading developer data platform</span></a></div></div><div class="ea-callout"><a rel="nofollow noopener" target="_blank" href="https://www.ethicalads.io/advertisers/topics/devops/?ref=ea-text">Ads by EthicalAds</a></div></div></div></div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="https://pyglet.readthedocs.io/en/latest/programming_guide/resources.html" class="btn btn-neutral float-left" title="Application resources" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="https://pyglet.readthedocs.io/en/latest/programming_guide/events.html" class="btn btn-neutral float-right" title="Event dispatching &amp; handling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>© Copyright 2006-2008, Alex Holkner. 2008-2025 pyglet contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org/">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+
+<readthedocs-flyout><template shadowrootmode="open"><!---->
+      <div class=" floating container bottom-right ">
+        <!--?lit$542843926$-->
+      <header>
+        <img class="logo" alt="Read the Docs" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmc6c3ZnCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9InN2ZyIKICAgeD0iMHB4IgogICB5PSIwcHgiCiAgIHZpZXdCb3g9IjY5NCAxOTcgMzQ2LjY5ODU1IDM5OS45ODQ3NyIKICAgc29kaXBvZGk6ZG9jbmFtZT0ibG9nby1saWdodC5zdmciCiAgIHdpZHRoPSIzNDYuNjk4NTUiCiAgIGhlaWdodD0iMzk5Ljk4NDc3IgogICBpbmtzY2FwZTp2ZXJzaW9uPSIxLjMuMiAoMDkxZTIwZWYwZiwgMjAyMy0xMS0yNSwgY3VzdG9tKSIKICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiCiAgIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHN2ZzpkZWZzCiAgICAgaWQ9ImRlZnMxMiIgLz4KICA8c29kaXBvZGk6bmFtZWR2aWV3CiAgICAgaWQ9Im5hbWVkdmlldzEyIgogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIKICAgICBib3JkZXJjb2xvcj0iIzAwMDAwMCIKICAgICBib3JkZXJvcGFjaXR5PSIwLjI1IgogICAgIGlua3NjYXBlOnNob3dwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwLjAiCiAgICAgaW5rc2NhcGU6cGFnZWNoZWNrZXJib2FyZD0iMCIKICAgICBpbmtzY2FwZTpkZXNrY29sb3I9IiNkMWQxZDEiCiAgICAgaW5rc2NhcGU6em9vbT0iMS4yNTIiCiAgICAgaW5rc2NhcGU6Y3g9Ijk5OC40MDI1NiIKICAgICBpbmtzY2FwZTpjeT0iMTk5LjY4MDUxIgogICAgIGlua3NjYXBlOndpbmRvdy13aWR0aD0iMzQ0MCIKICAgICBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMzg5IgogICAgIGlua3NjYXBlOndpbmRvdy14PSIwIgogICAgIGlua3NjYXBlOndpbmRvdy15PSIyNyIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9InN2ZyIgLz4KICA8c3ZnOmcKICAgICBpZD0ibG9nbyIKICAgICB0cmFuc2Zvcm09Im1hdHJpeCgwLjU1NzUzNjQ0LDAsMCwwLjU1NzUzNjQ0LDY2LjUzMTgxMiwxMDUwLjEyNjIpIj4KICAgIDxzdmc6cGF0aAogICAgICAgc3R5bGU9ImZpbGw6I2ZjZmNmYyIKICAgICAgIGQ9Im0gMTQwOC4xLC0xMTgxLjcgYyAtNy41LDEgLTEyLjcsNy44IC0xMS43LDE1LjMgMC43LDUuNCA0LjYsOS45IDkuOSwxMS4zIDAsMCAzMy4yLDExIDg5LjcsMTUuNiA0NS40LDMuNyA5Ni45LC0zLjIgOTYuOSwtMy4yIDcuNSwtMC4yIDEzLjUsLTYuNSAxMy4yLC0xNCAtMC4zLC03LjUgLTYuNSwtMTMuNSAtMTQsLTEzLjIgLTAuOSwwIC0xLjgsMC4xIC0yLjYsMC4zIDAsMCAtNTAuNCw2LjIgLTkxLjMsMi45IC01NCwtNC40IC04My40LC0xNC4zIC04My40LC0xNC4zIC0yLjIsLTAuNyAtNC41LC0xIC02LjcsLTAuNyB6IG0gMCwtNjcuNiBjIC03LjUsMSAtMTIuNyw3LjggLTExLjcsMTUuMyAwLjcsNS40IDQuNiw5LjkgOS45LDExLjMgMCwwIDMzLjIsMTEgODkuNywxNS42IDQ1LjQsMy43IDk2LjksLTMuMiA5Ni45LC0zLjIgNy41LC0wLjIgMTMuNSwtNi41IDEzLjIsLTE0IC0wLjMsLTcuNSAtNi41LC0xMy41IC0xNCwtMTMuMiAtMC45LDAgLTEuOCwwLjEgLTIuNiwwLjMgMCwwIC01MC40LDYuMiAtOTEuMywyLjkgLTU0LC00LjQgLTgzLjQsLTE0LjMgLTgzLjQsLTE0LjMgLTIuMiwtMC43IC00LjUsLTEgLTYuNywtMC43IHogbSAwLC02Ny42IGMgLTcuNSwxIC0xMi43LDcuOCAtMTEuNywxNS4zIDAuNyw1LjQgNC42LDkuOSA5LjksMTEuMyAwLDAgMzMuMiwxMSA4OS43LDE1LjYgNDUuNCwzLjcgOTYuOSwtMy4yIDk2LjksLTMuMiA3LjUsLTAuMiAxMy41LC02LjUgMTMuMiwtMTQgLTAuMywtNy41IC02LjUsLTEzLjUgLTE0LC0xMy4yIC0wLjksMCAtMS44LDAuMSAtMi42LDAuMyAwLDAgLTUwLjQsNi4yIC05MS4zLDIuOSAtNTQsLTQuNCAtODMuNCwtMTQuMyAtODMuNCwtMTQuMyAtMi4yLC0wLjcgLTQuNSwtMSAtNi43LC0wLjcgeiBtIDAsLTY3LjUgYyAtNy41LDEgLTEyLjcsNy44IC0xMS43LDE1LjMgMC43LDUuNCA0LjYsOS45IDkuOSwxMS4zIDAsMCAzMy4yLDExIDg5LjcsMTUuNiA0NS40LDMuNyA5Ni45LC0zLjIgOTYuOSwtMy4yIDcuNSwtMC4yIDEzLjUsLTYuNSAxMy4yLC0xNCAtMC4zLC03LjUgLTYuNSwtMTMuNSAtMTQsLTEzLjIgLTAuOSwwIC0xLjgsMC4xIC0yLjYsMC4zIDAsMCAtNTAuNCw2LjIgLTkxLjMsMi45IC01NCwtNC40IC04My40LC0xNC4zIC04My40LC0xNC4zIC0yLjIsLTAuOCAtNC41LC0xIC02LjcsLTAuNyB6IG0gLTk0LjcsLTcxLjMgYyAtNzEsMC41IC05Ny41LDIyLjMgLTk3LjUsMjIuMyB2IDUzMC4zIGMgMCwwIDI1LjgsLTIyLjMgMTA5LC0xOC45IDgzLjIsMy40IDEwMC4zLDMyLjYgMjAyLjUsMzQuNiAxMDIuMiwyLjEgMTI3LjksLTE1LjcgMTI3LjksLTE1LjcgbCAxLjUsLTU0MC42IGMgMCwwIC00NiwxMyAtMTM1LjUsMTMuNyAtODkuNSwwLjcgLTExMSwtMjIuOCAtMTkzLjIsLTI1LjUgLTUuMSwtMC4xIC0xMCwtMC4yIC0xNC43LC0wLjIgeiBtIDU5LjQsMzQuNiBjIDAsMCA0MywxNC4yIDEyMi41LDE4LjIgNjcuMiwzLjMgMTM0LjUsLTYuNiAxMzQuNSwtNi42IFYgLTkyOSBjIDAsMCAtMzQuMSwxNy45IC0xMTkuMywxMS44IC02NiwtNC43IC0xMzguNywtMjkuNyAtMTM4LjcsLTI5LjcgeiBtIC00MS41LDEyLjUgYyA3LjYsMCAxMy43LDYuMiAxMy43LDEzLjcgMCw3LjUgLTYuMiwxMy43IC0xMy43LDEzLjcgMCwwIC0yMi4zLDAuMSAtMzUuOCwxLjUgLTIyLjgsMi4zIC0zOC4zLDEwLjYgLTM4LjMsMTAuNiAtNi43LDMuNSAtMTUsMSAtMTguNSwtNS43IC0zLjUsLTYuNyAtMSwtMTUgNS43LC0xOC41IDAsMCAwLDAgMCwwIDAsMCAyMC4yLC0xMC43IDQ4LjQsLTEzLjUgMTYuMywtMS43IDM4LjUsLTEuOCAzOC41LC0xLjggeiBtIC0xMy4yLDY3LjggYyA3LjYsLTAuMiAxMy4zLDAgMTMuMywwIDcuNSwwLjkgMTIuOSw3LjggMTIsMTUuMyAtMC44LDYuMyAtNS43LDExLjIgLTEyLDEyIDAsMCAtMjIuMywwLjEgLTM1LjgsMS41IC0yMi44LDIuMyAtMzguMywxMC42IC0zOC4zLDEwLjYgLTYuNywzLjUgLTE1LDAuOSAtMTguNSwtNS44IC0zLjUsLTYuNyAtMC45LC0xNSA1LjgsLTE4LjUgMCwwIDIwLjIsLTEwLjcgNDguNCwtMTMuNSA3LjksLTAuOSAxNy41LC0xLjQgMjUuMSwtMS42IHogbSAxMy4yLDY3LjUgYyA3LjYsMCAxMy43LDYuMiAxMy43LDEzLjcgMCw3LjYgLTYuMiwxMy43IC0xMy43LDEzLjcgMCwwIC0yMi4zLC0wLjEgLTM1LjgsMS4yIC0yMi44LDIuMyAtMzguMywxMC42IC0zOC4zLDEwLjYgLTYuNywzLjUgLTE1LDAuOSAtMTguNSwtNS44IC0zLjUsLTYuNyAtMC45LC0xNSA1LjgsLTE4LjUgMCwwIDIwLjIsLTEwLjcgNDguNCwtMTMuNSAxNi4yLC0xLjUgMzguNCwtMS40IDM4LjQsLTEuNCB6IgogICAgICAgaWQ9InBhdGgxIiAvPgogIDwvc3ZnOmc+CiAgPGRpdgogICAgIGlkPSJzYWthLWd1aS1yb290Ij4KICAgIDxkaXY+CiAgICAgIDxkaXY+CiAgICAgICAgPHN0eWxlIC8+CiAgICAgIDwvZGl2PgogICAgPC9kaXY+CiAgPC9kaXY+Cjwvc3ZnOnN2Zz4K">
+        <!--?lit$542843926$--> <!--?lit$542843926$--><span class="version">
+        <!--?lit$542843926$--><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="code-branch" class="svg-inline--fa fa-code-branch icon" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M80 104a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm80-24c0 32.8-19.7 61-48 73.3l0 87.8c18.8-10.9 40.7-17.1 64-17.1l96 0c35.3 0 64-28.7 64-64l0-6.7C307.7 141 288 112.8 288 80c0-44.2 35.8-80 80-80s80 35.8 80 80c0 32.8-19.7 61-48 73.3l0 6.7c0 70.7-57.3 128-128 128l-96 0c-35.3 0-64 28.7-64 64l0 6.7c28.3 12.3 48 40.5 48 73.3c0 44.2-35.8 80-80 80s-80-35.8-80-80c0-32.8 19.7-61 48-73.3l0-6.7 0-198.7C19.7 141 0 112.8 0 80C0 35.8 35.8 0 80 0s80 35.8 80 80zm232 0a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM80 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"></path></svg> <!--?lit$542843926$-->latest
+      </span> 
+        <span class="caret"><!--?lit$542843926$--><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="caret-down" class="svg-inline--fa fa-caret-down icon" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"></path></svg></span>
+      </header>
+    
+        <main class=" closed ">
+          <!--?lit$542843926$--> <!--?lit$542843926$-->
+      <dl class="versions">
+        <dt>Versions</dt>
+        <!--?lit$542843926$--><!----><dd><!--?lit$542843926$--><strong><!--?lit$542843926$--><a href="https://pyglet.readthedocs.io/en/latest/programming_guide/rendering.html"><!--?lit$542843926$-->latest</a></strong></dd><!----><!----><dd><!--?lit$542843926$--><a href="https://pyglet.readthedocs.io/en/pyglet-2.0-maintenance/programming_guide/rendering.html"><!--?lit$542843926$-->pyglet-2.0-maintenance</a></dd><!----><!----><dd><!--?lit$542843926$--><a href="https://pyglet.readthedocs.io/en/development/programming_guide/rendering.html"><!--?lit$542843926$-->development</a></dd><!---->
+      </dl>
+    
+          <!--?lit$542843926$-->
+      <dl class="downloads">
+        <dt>Downloads</dt>
+        <!--?lit$542843926$--><!----><dd>
+              <a href="https://pyglet.readthedocs.io/_/downloads/en/latest/epub/"><!--?lit$542843926$-->EPUB</a>
+            </dd><!----><!----><dd>
+              <a href="https://pyglet.readthedocs.io/_/downloads/en/latest/htmlzip/"><!--?lit$542843926$-->HTML</a>
+            </dd><!---->
+      </dl>
+     <!--?lit$542843926$-->
+      <dl>
+        <dt>On Read the Docs</dt>
+        <dd>
+          <a href="https://app.readthedocs.org/projects/pyglet/?utm_source=pyglet&amp;utm_content=flyout">Project Home</a>
+        </dd>
+        <dd>
+          <a href="https://app.readthedocs.org/projects/pyglet/builds/?utm_source=pyglet&amp;utm_content=flyout">Builds</a>
+        </dd>
+      </dl>
+    
+          <!--?lit$542843926$--> <!--?lit$542843926$-->
+        <dl>
+          <dt>Search</dt>
+          <dd>
+            <form id="flyout-search-form">
+              <input type="text" name="q" aria-label="Search docs" placeholder="Search docs">
+            </form>
+          </dd>
+        </dl>
+      
+          <hr>
+          <!--?lit$542843926$-->
+      <small>
+        <span>
+          <a href="https://docs.readthedocs.io/page/addons.html?utm_source=pyglet&amp;utm_content=flyout">Addons documentation</a></span>
+        <span> ― </span>
+        <span>Hosted by
+          <a href="https://about.readthedocs.com/?utm_source=pyglet&amp;utm_content=flyout">Read the Docs</a></span>
+      </small>
+    
+        </main>
+      </div>
+    </template></readthedocs-flyout><readthedocs-notification class="raised toast"><template shadowrootmode="open"><!----></template></readthedocs-notification><readthedocs-search class="raised floating"><template shadowrootmode="open"><!---->
+      <div role="search" hidden="">
+        <div class="background"></div>
+        <div class="content">
+          <form class="  ">
+            <label><!--?lit$542843926$--><svg aria-labelledby="svg-inline--fa-title-7cXqXZjms6mW" data-prefix="fas" data-icon="magnifying-glass" class="svg-inline--fa fa-magnifying-glass" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><title id="svg-inline--fa-title-7cXqXZjms6mW">Search docs</title><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg></label>
+            <input placeholder="Search docs" type="search" autocomplete="off">
+          </form>
+          <!--?lit$542843926$-->
+          <div class="results">
+            <!--?lit$542843926$--><p>No recent searches</p>
+          </div>
+          <div class="footer">
+            <ul class="help">
+              <li><code>Enter</code> to select</li>
+              <li><code>Up</code>/<code>Down</code> to navigate</li>
+              <li><code>Esc</code> to close</li>
+            </ul>
+            <div class="credits">
+              Search powered by
+              <a href="https://about.readthedocs.com/?utm_source=pyglet&amp;utm_content=search">
+                <img alt="Read the Docs" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJzdmciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSI2OTQgMTk3IDIwMDAgNDAwIj4KPGcgaWQ9ImxvZ28iIHRyYW5zZm9ybT0ibWF0cml4KDAuNTU3NTM2NDQsMCwwLDAuNTU3NTM2NDQsNjguMzA4MTM1LDEwNTAuMTI2MikiPgoJPHBhdGggc3R5bGU9ImZpbGw6IzMyMzIyQSIgZD0iTTE0MDguMS0xMTgxLjdjLTcuNSwxLTEyLjcsNy44LTExLjcsMTUuMyAgIGMwLjcsNS40LDQuNiw5LjksOS45LDExLjNjMCwwLDMzLjIsMTEsODkuNywxNS42YzQ1LjQsMy43LDk2LjktMy4yLDk2LjktMy4yYzcuNS0wLjIsMTMuNS02LjUsMTMuMi0xNHMtNi41LTEzLjUtMTQtMTMuMiAgIGMtMC45LDAtMS44LDAuMS0yLjYsMC4zYzAsMC01MC40LDYuMi05MS4zLDIuOWMtNTQtNC40LTgzLjQtMTQuMy04My40LTE0LjNDMTQxMi42LTExODEuNywxNDEwLjMtMTE4MiwxNDA4LjEtMTE4MS43eiAgICBNMTQwOC4xLTEyNDkuM2MtNy41LDEtMTIuNyw3LjgtMTEuNywxNS4zYzAuNyw1LjQsNC42LDkuOSw5LjksMTEuM2MwLDAsMzMuMiwxMSw4OS43LDE1LjZjNDUuNCwzLjcsOTYuOS0zLjIsOTYuOS0zLjIgICBjNy41LTAuMiwxMy41LTYuNSwxMy4yLTE0cy02LjUtMTMuNS0xNC0xMy4yYy0wLjksMC0xLjgsMC4xLTIuNiwwLjNjMCwwLTUwLjQsNi4yLTkxLjMsMi45Yy01NC00LjQtODMuNC0xNC4zLTgzLjQtMTQuMyAgIEMxNDEyLjYtMTI0OS4zLDE0MTAuMy0xMjQ5LjYsMTQwOC4xLTEyNDkuM3ogTTE0MDguMS0xMzE2LjljLTcuNSwxLTEyLjcsNy44LTExLjcsMTUuM2MwLjcsNS40LDQuNiw5LjksOS45LDExLjMgICBjMCwwLDMzLjIsMTEsODkuNywxNS42YzQ1LjQsMy43LDk2LjktMy4yLDk2LjktMy4yYzcuNS0wLjIsMTMuNS02LjUsMTMuMi0xNHMtNi41LTEzLjUtMTQtMTMuMmMtMC45LDAtMS44LDAuMS0yLjYsMC4zICAgYzAsMC01MC40LDYuMi05MS4zLDIuOWMtNTQtNC40LTgzLjQtMTQuMy04My40LTE0LjNDMTQxMi42LTEzMTYuOSwxNDEwLjMtMTMxNy4yLDE0MDguMS0xMzE2Ljl6IE0xNDA4LjEtMTM4NC40ICAgYy03LjUsMS0xMi43LDcuOC0xMS43LDE1LjNjMC43LDUuNCw0LjYsOS45LDkuOSwxMS4zYzAsMCwzMy4yLDExLDg5LjcsMTUuNmM0NS40LDMuNyw5Ni45LTMuMiw5Ni45LTMuMmM3LjUtMC4yLDEzLjUtNi41LDEzLjItMTQgICBzLTYuNS0xMy41LTE0LTEzLjJjLTAuOSwwLTEuOCwwLjEtMi42LDAuM2MwLDAtNTAuNCw2LjItOTEuMywyLjljLTU0LTQuNC04My40LTE0LjMtODMuNC0xNC4zICAgQzE0MTIuNi0xMzg0LjUsMTQxMC4zLTEzODQuNywxNDA4LjEtMTM4NC40eiBNMTMxMy40LTE0NTUuN2MtNzEsMC41LTk3LjUsMjIuMy05Ny41LDIyLjN2NTMwLjNjMCwwLDI1LjgtMjIuMywxMDktMTguOSAgIGM4My4yLDMuNCwxMDAuMywzMi42LDIwMi41LDM0LjZjMTAyLjIsMi4xLDEyNy45LTE1LjcsMTI3LjktMTUuN2wxLjUtNTQwLjZjMCwwLTQ2LDEzLTEzNS41LDEzLjdzLTExMS0yMi44LTE5My4yLTI1LjUgICBDMTMyMy0xNDU1LjYsMTMxOC4xLTE0NTUuNywxMzEzLjQtMTQ1NS43eiBNMTM3Mi44LTE0MjEuMWMwLDAsNDMsMTQuMiwxMjIuNSwxOC4yYzY3LjIsMy4zLDEzNC41LTYuNiwxMzQuNS02LjZ2NDgwLjUgICBjMCwwLTM0LjEsMTcuOS0xMTkuMywxMS44Yy02Ni00LjctMTM4LjctMjkuNy0xMzguNy0yOS43TDEzNzIuOC0xNDIxLjF6IE0xMzMxLjMtMTQwOC42YzcuNiwwLDEzLjcsNi4yLDEzLjcsMTMuNyAgIHMtNi4yLDEzLjctMTMuNywxMy43YzAsMC0yMi4zLDAuMS0zNS44LDEuNWMtMjIuOCwyLjMtMzguMywxMC42LTM4LjMsMTAuNmMtNi43LDMuNS0xNSwxLTE4LjUtNS43cy0xLTE1LDUuNy0xOC41YzAsMCwwLDAsMCwwICAgYzAsMCwyMC4yLTEwLjcsNDguNC0xMy41QzEzMDkuMS0xNDA4LjUsMTMzMS4zLTE0MDguNiwxMzMxLjMtMTQwOC42eiBNMTMxOC4xLTEzNDAuOGM3LjYtMC4yLDEzLjMsMCwxMy4zLDAgICBjNy41LDAuOSwxMi45LDcuOCwxMiwxNS4zYy0wLjgsNi4zLTUuNywxMS4yLTEyLDEyYzAsMC0yMi4zLDAuMS0zNS44LDEuNWMtMjIuOCwyLjMtMzguMywxMC42LTM4LjMsMTAuNmMtNi43LDMuNS0xNSwwLjktMTguNS01LjggICBjLTMuNS02LjctMC45LTE1LDUuOC0xOC41YzAsMCwyMC4yLTEwLjcsNDguNC0xMy41QzEzMDAuOS0xMzQwLjEsMTMxMC41LTEzNDAuNiwxMzE4LjEtMTM0MC44eiBNMTMzMS4zLTEyNzMuMyAgIGM3LjYsMCwxMy43LDYuMiwxMy43LDEzLjdjMCw3LjYtNi4yLDEzLjctMTMuNywxMy43YzAsMC0yMi4zLTAuMS0zNS44LDEuMmMtMjIuOCwyLjMtMzguMywxMC42LTM4LjMsMTAuNiAgIGMtNi43LDMuNS0xNSwwLjktMTguNS01LjhjLTMuNS02LjctMC45LTE1LDUuOC0xOC41YzAsMCwyMC4yLTEwLjcsNDguNC0xMy41QzEzMDkuMS0xMjczLjQsMTMzMS4zLTEyNzMuMywxMzMxLjMtMTI3My4zeiIvPgo8L2c+CjxnIGlkPSJ0ZXh0Ij4KCTxwYXRoIHN0eWxlPSJmaWxsOiMzMjMyMkEiIGQ9Ik0xMTI4LjYsNDkxLjlWNDcwbDguOS0wLjhjNS4yLTAuNSw3LjgtMy4xLDcuOC03LjZWMzM2bC0xNS40LTAuOHYtMjNoNzMuOCAgIGMyMC45LDAsMzYuOSwzLjksNDguMSwxMS42YzExLjIsNy43LDE2LjgsMjAuNSwxNi44LDM4LjFjMCwxMi4zLTMuMiwyMi4zLTkuNywzMC4zYy02LjMsNy45LTEzLjksMTMuNy0yMi43LDE3LjMgICBjNi41LDIuMywxMS42LDcuOCwxNS40LDE2LjVsMTkuNSw0Mi40bDE1LjQsMC41djIzaC02Ni44VjQ3MGw3LjgtMC44YzQuMS0wLjUsNi4yLTIuMiw2LjItNC45YzAtMS4xLTAuNC0yLjMtMS4xLTMuOGwtMTIuNy0yNyAgIGMtMi00LjUtNC4yLTcuNy02LjgtOS41Yy0yLjMtMi01LjgtMy0xMC4zLTNoLTI0LjZ2NDdsMTcuNiwwLjh2MjNMMTEyOC42LDQ5MS45IE0xMTc4LjMsMzk1LjRoMjMuNWMyMi4yLDAsMzMuMi05LjksMzMuMi0yOS43ICAgYzAtMTEuNC0zLTE4LjctOC45LTIyLjJjLTUuOC0zLjQtMTUuMS01LjEtMjguMS01LjFoLTE5LjdWMzk1LjQiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiMzMjMyMkEiIGQ9Ik0xMzU2LDM1MS45YzEzLjUsMCwyNC4yLDMuMywzMi4yLDEwYzcuOSw2LjUsMTEuOSwxNS43LDExLjksMjcuNmMwLDcuOS0xLjcsMTUtNS4xLDIxLjEgICBjLTMuNCw1LjktNy43LDEwLjYtMTIuNywxNC4xYy01LDMuNC0xMS4yLDYuMi0xOC40LDguNGMtMTIuMSwzLjYtMjUuNyw1LjQtNDAuOCw1LjRjMC41LDkuNSwzLjUsMTcuMyw4LjksMjMuMiAgIGM1LjQsNS44LDEzLjcsOC42LDI0LjksOC42YzExLjIsMCwyMi4zLTQsMzMuNS0xMS45bDEwLjMsMjEuOWMtMy42LDMuMi05LjcsNi42LTE4LjQsMTBjLTguNSwzLjQtMTguMiw1LjEtMjkuMiw1LjEgICBjLTIyLDAtMzguMS02LTQ4LjQtMTguMWMtMTAuMy0xMi4zLTE1LjQtMjktMTUuNC01MC4zYzAtMjEuMyw1LjktMzkuMSwxNy42LTUzLjVDMTMxOC41LDM1OS4xLDEzMzQuOSwzNTEuOSwxMzU2LDM1MS45ICAgIE0xMzQzLjYsNDEzLjhjNi43LTEuMywxMi44LTMuOSwxOC40LTcuOGM1LjYtNC4xLDguNC05LDguNC0xNC42YzAtMTEtNS40LTE2LjUtMTYuMi0xNi41Yy0xMC4xLDAtMTcuOCw0LjEtMjMuMiwxMi4yICAgYy01LjQsNy45LTguNCwxNy41LTguOSwyOC42QzEzMjkuOSw0MTUuNSwxMzM3LjEsNDE0LjksMTM0My42LDQxMy44Ii8+Cgk8cGF0aCBzdHlsZT0iZmlsbDojMzIzMjJBIiBkPSJNMTUyOS42LDM2MS40djEwMC41YzAsMi45LDAuNSw0LjksMS40LDUuOWMxLjEsMS4xLDIuOSwxLjcsNS40LDEuOWw4LjYsMC41djIxLjZoLTQzdi0xNS43ICAgbC0wLjgtMC4zYy05LDEzLTIxLjQsMTkuNS0zNywxOS41Yy0xOC40LDAtMzItNS45LTQwLjgtMTcuNmMtOC44LTExLjctMTMuMi0yNy43LTEzLjItNDguMWMwLTI0LjUsNS45LTQzLjYsMTcuOC01Ny4zICAgYzExLjktMTMuNywyOS43LTIwLjUsNTMuNS0yMC41QzE0OTYuOCwzNTEuOSwxNTEyLjksMzU1LjEsMTUyOS42LDM2MS40IE0xNDk4LjMsNDQ4Ljl2LTcwYy01LTIuMy0xMi0zLjUtMjAuOC0zLjUgICBjLTEyLjEsMC0yMC44LDQuOS0yNi4yLDE0LjZjLTUuNCw5LjctOC4xLDIyLjYtOC4xLDM4LjdjMCwyOS4yLDkuNCw0My44LDI4LjEsNDMuOGM3LjksMCwxNC40LTIuMywxOS41LTcgICBDMTQ5NS43LDQ2MC42LDE0OTguMyw0NTUuMSwxNDk4LjMsNDQ4LjkiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiMzMjMyMkEiIGQ9Ik0xNjE2LjMsMzUxLjljNy43LDAsMTUuMSwxLjEsMjIuMiwzLjJ2LTI3LjNjMC00LTIuMy02LjEtNy02LjVsLTExLjYtMC44di0yMS40aDUwLjN2MTY0LjMgICBjMC4yLDQuMSwyLjQsNi4yLDYuOCw2LjJsOS41LDAuNXYyMS42aC00My44VjQ3NmwtMC44LTAuM2MtOC4xLDEzLjItMjAuNCwxOS43LTM2LjgsMTkuN2MtMjAuNSwwLTM1LTYuOC00My4yLTIwLjUgICBjLTcuNi0xMi40LTExLjQtMjcuNy0xMS40LTQ1LjdjMC0yMy40LDUuOC00Mi4yLDE3LjMtNTYuMkMxNTc5LjMsMzU4LjksMTU5NS41LDM1MS45LDE2MTYuMywzNTEuOSBNMTYzOC40LDQ0OS44di03MCAgIGMtNi41LTIuOS0xMy4zLTQuMy0yMC41LTQuM2MtMTEuOSwwLTIwLjYsNC44LTI2LjIsMTQuM2MtNS40LDkuNi04LjEsMjEuNy04LjEsMzYuNWMwLDMwLjMsOS43LDQ1LjQsMjkuMiw0NS40ICAgYzcuNCwwLDEzLjUtMi4xLDE4LjQtNi4yQzE2MzYsNDYxLjEsMTYzOC40LDQ1NS45LDE2MzguNCw0NDkuOCIvPgoJPHBhdGggc3R5bGU9ImZpbGw6IzMyMzIyQSIgZD0iTTE3OTEuNyw0NzAuNmMwLDAtMTIuNSw0LjctMTkuMiw0LjdzLTkuMi0zLjMtOS4yLTExLjhjMC0zLjgsMC41LTguOCwxLjQtMTQuOWwxMC4yLTYzLjFoMzIuNiAgIGwyLjgtMTcuN2gtMzIuNmw1LjctMzQuNUwxNzYwLDMzOGwtNC43LDI5LjhsLTIzLjYsMi40bC0yLjYsMTUuNGgyMy40TDE3NDIsNDUxYy0wLjksNS40LTEuNCwxMC42LTEuNCwxNS4xICAgYzAsMTguNyw3LjgsMjguMSwyMy45LDI4LjFjMTMuMiwwLDMxLTEwLjksMzEtMTAuOUwxNzkxLjcsNDcwLjYiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiMzMjMyMkEiIGQ9Ik0xODY1LDMwOS44bC00My4zLDEuMmwtMi4xLDEzbDE5LjksNC43bC0yNiwxNjMuMmgyMi41bDcuOC00Mi42YzAsMCwxOC43LTY1LDQ5LjQtNjUgICBjOS41LDAsMTIuMyw2LjksMTIuMywxNS42YzAsMy4zLTAuNSw2LjktMC45LDEwLjRsLTEzLjUsODEuNmw0My4zLTIuNGwyLjEtMTNsLTE5LjktMy41bDEwLjYtNjYuMmMwLjctNSwxLjItOS43LDEuMi0xNCAgIGMwLTE3LTYuOS0yOC42LTI1LjgtMjguNmMtMzUuOSwwLTU0LjksNDUuNi01NS44LDQ4LjJMMTg2NSwzMDkuOCIvPgoJPHBhdGggc3R5bGU9ImZpbGw6IzMyMzIyQSIgZD0iTTIwMzUsNDY0LjdjMCwwLTIxLjUsMTAuNi0zOC44LDEwLjZjLTE3LjcsMC0yNi03LjgtMjYtMjQuNmMwLTMuMSwwLjItNi42LDAuNy0xMC4yICAgYzQ5LDAsODMtMTguNCw4My00NS42YzAtMTguNy0xNS4xLTMwLjctMzktMzAuN2MtMzcuNiwwLTY4LjMsMzguNS02OC4zLDg3LjVjMCwyNiwxNi42LDQyLjYsNDIuNiw0Mi42YzI3LjksMCw1My0xNy41LDUzLTE3LjUgICBMMjAzNSw0NjQuNyBNMTk3Myw0MjRjNi4xLTI0LjgsMjMuNC00Mi4xLDQwLjctNDIuMWMxMi4xLDAsMTcuNyw1LDE3LjcsMTUuNEMyMDMxLjUsNDEyLjksMjAwNi42LDQyNCwxOTczLDQyNCIvPgoJPHBhdGggc3R5bGU9ImZpbGw6IzMyMzIyQSIgZD0iTTIwOTMuNyw0OTEuOVY0NzBsOC45LTAuOGM1LjItMC41LDcuOC0zLjEsNy44LTcuNlYzMzZsLTE1LjQtMC44di0yM2g3NC4xICAgYzI2LjUsMCw0Ny4xLDcsNjEuOSwyMS4xYzE1LDE0LjEsMjIuNCwzNC45LDIyLjQsNjIuNGMwLDE3LjEtMi4zLDMyLjEtNi44LDQ0LjljLTQuNSwxMi42LTEwLjYsMjIuNS0xOC40LDI5LjcgICBjLTE1LjUsMTQuNC0zNC44LDIxLjYtNTcuOCwyMS42TDIwOTMuNyw0OTEuOSBNMjE0My40LDMzOC40VjQ2NmgyNy42YzE1LjUsMCwyNy42LTUuNiwzNi4yLTE2LjhjOC42LTExLjIsMTMtMjcuNCwxMy00OC43ICAgYzAtNDEuNC0xNy42LTYyLjItNTIuNy02Mi4ySDIxNDMuNCIvPgoJPHBhdGggc3R5bGU9ImZpbGw6IzMyMzIyQSIgZD0iTTIzMzAsNDcyLjJjMTkuNiwwLDI5LjUtMTUuOSwyOS41LTQ3LjZjMC0xNi0yLjMtMjguMi02LjgtMzYuNWMtNC4zLTguMy0xMS43LTEyLjQtMjIuMi0xMi40ICAgYy0xMC4zLDAtMTcuOCw0LTIyLjcsMTEuOWMtNC45LDcuOS03LjMsMTguNy03LjMsMzIuNGMwLDI1LjQsNC43LDQxLjQsMTQuMSw0Ny44QzIzMTguOCw0NzAuNywyMzIzLjksNDcyLjIsMjMzMCw0NzIuMiAgICBNMjI2Ny45LDQyMy44YzAtMTMuMywyLTI0LjksNS45LTM0LjZjNC05LjksOS4zLTE3LjUsMTUuOS0yMi43YzEyLjgtOS43LDI2LjktMTQuNiw0Mi40LTE0LjZjMTAuOCwwLDE5LjksMS44LDI3LjMsNS40ICAgYzcuNiwzLjQsMTMuNCw3LjUsMTcuNiwxMi4yYzQuMyw0LjUsNy45LDExLjIsMTAuOCwyMGMzLjEsOC42LDQuNiwxOC45LDQuNiwzMC44YzAsMjQuOS02LDQzLjctMTguMSw1Ni41ICAgYy0xMi4xLDEyLjgtMjcuNiwxOS4yLTQ2LjUsMTkuMmMtMTguNywwLTMzLjQtNi00NC4xLTE4LjFDMjI3My4yLDQ2NS42LDIyNjcuOSw0NDcuNiwyMjY3LjksNDIzLjgiLz4KCTxwYXRoIHN0eWxlPSJmaWxsOiMzMjMyMkEiIGQ9Ik0yNDM4LjIsNDIyLjVjMCwxNS4zLDIuOSwyNy4yLDguNiwzNS43YzUuOCw4LjUsMTQuMSwxMi43LDI0LjksMTIuN2MxMSwwLDIxLjgtMy45LDMyLjQtMTEuNiAgIGwxMS42LDIwLjhjLTEyLjgsMTAuNS0yOC44LDE1LjctNDguMSwxNS43Yy0xOS4zLDAtMzQuNS02LTQ1LjctMTguMWMtMTEtMTIuMy0xNi41LTMwLjMtMTYuNS01NC4xczYuMy00MS42LDE4LjktNTMuNSAgIGMxMi44LTEyLjEsMjcuMS0xOC4xLDQzLTE4LjFjMTYsMCwzMC45LDMuNyw0NC42LDExLjF2MzUuMWwtMjQuOSwxLjl2LTEzYzAtNC45LTEuOC03LjgtNS40LTguOWMtMy40LTEuMy03LTEuOS0xMC44LTEuOSAgIEMyNDQ5LjEsMzc2LjIsMjQzOC4yLDM5MS42LDI0MzguMiw0MjIuNSIvPgoJPHBhdGggc3R5bGU9ImZpbGw6IzMyMzIyQSIgZD0iTTI1OTIuOSwzNzYuNWMtNC4zLTEuNi05LjYtMi40LTE1LjctMi40Yy02LjEsMC0xMS4xLDEuNC0xNC45LDQuM2MtMy42LDIuNy01LjQsNi4xLTUuNCwxMC4zICAgYzAsNCwwLjYsNy4xLDEuOSw5LjVjMS40LDIuMiwzLjYsNC4xLDYuNSw1LjdjNC41LDIuMyw5LjksNC40LDE2LjIsNi4yYzYuMywxLjYsMTEsMywxNC4xLDQuMWMzLjEsMC45LDYuOCwyLjUsMTEuNCw0LjkgICBjNC43LDIuMyw4LjIsNC45LDEwLjUsNy42YzYuMyw2LjcsOS41LDE1LjIsOS41LDI1LjdjMCwxMy41LTUsMjQuMS0xNC45LDMxLjljLTkuNyw3LjYtMjIuMiwxMS40LTM3LjMsMTEuNCAgIGMtMjIsMC0zOC42LTIuOC00OS43LTguNHYtMzcuNmwyNC4zLTEuOXYxM2MwLDcuOSw3LjYsMTEuOSwyMi43LDExLjlzMjIuNy01LjUsMjIuNy0xNi41YzAtNC0xLjQtNy4yLTQuMS05LjcgICBjLTIuNS0yLjUtNS00LjItNy42LTUuMWMtMi41LTAuOS01LjYtMS44LTkuMi0yLjdjLTMuNC0wLjktNi44LTEuOC0xMC4zLTIuN2MtMy4yLTAuOS02LjgtMi4xLTEwLjgtMy41Yy0zLjgtMS42LTgtMy45LTEyLjctNi44ICAgYy05LjItNS45LTEzLjgtMTUuOS0xMy44LTI5LjdjMC0xNC4xLDUtMjQuOSwxNC45LTMyLjRjOS45LTcuNiwyMi4zLTExLjQsMzcuMy0xMS40YzE1LjEsMCwzMC4xLDMuNiw0NC45LDEwLjh2MzIuNGwtMjQuMywxLjkgICB2LTExLjRDMjU5OS4xLDM4MS4yLDI1OTcsMzc4LjEsMjU5Mi45LDM3Ni41Ii8+CjwvZz4KPGRpdiB4bWxucz0iIiBpZD0ic2FrYS1ndWktcm9vdCI+PGRpdj48ZGl2PjxzdHlsZS8+PC9kaXY+PC9kaXY+PC9kaXY+PC9zdmc+">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template></readthedocs-search><readthedocs-hotkeys><template shadowrootmode="open"><!----></template></readthedocs-hotkeys></body><plasmo-csui><template shadowrootmode="open"><style>*,:before,:after{box-sizing:border-box;border:0 solid #e5e7eb}:before,:after{--tw-content:""}html,:host{-webkit-text-size-adjust:100%;tab-size:4;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;line-height:1.5}body{line-height:inherit;margin:0}hr{color:inherit;border-top-width:1px;height:0}abbr:where([title]){text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-feature-settings:normal;font-variation-settings:normal;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-feature-settings:inherit;font-variation-settings:inherit;font-family:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:#0000;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{margin:0;padding:0;list-style:none}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder{opacity:1;color:#9ca3af}textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}[hidden]{display:none}[type=text],input:where(:not([type])),[type=email],[type=url],[type=password],[type=number],[type=date],[type=datetime-local],[type=month],[type=search],[type=tel],[type=time],[type=week],[multiple],textarea,select{appearance:none;--tw-shadow:0 0 #0000;background-color:#fff;border-width:1px;border-color:#6b7280;border-radius:0;padding:8px 12px;font-size:16px;line-height:24px}[type=text]:focus,input:where(:not([type])):focus,[type=email]:focus,[type=url]:focus,[type=password]:focus,[type=number]:focus,[type=date]:focus,[type=datetime-local]:focus,[type=month]:focus,[type=search]:focus,[type=tel]:focus,[type=time]:focus,[type=week]:focus,[multiple]:focus,textarea:focus,select:focus{outline-offset:2px;--tw-ring-inset:var(--tw-empty, );--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(1px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow);border-color:#2563eb;outline:2px solid #0000}input::-moz-placeholder{color:#6b7280;opacity:1}textarea::-moz-placeholder{color:#6b7280;opacity:1}input::placeholder,textarea::placeholder{color:#6b7280;opacity:1}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-date-and-time-value{text-align:inherit;min-height:1.5em}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-year-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-month-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-day-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-hour-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-minute-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-second-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-millisecond-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-meridiem-field{padding-top:0;padding-bottom:0}select{-webkit-print-color-adjust:exact;print-color-adjust:exact;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right 8px center;background-repeat:no-repeat;background-size:1.5em 1.5em;padding-right:40px}[multiple],[size]:where(select:not([size="1"])){background-image:initial;background-position:initial;background-repeat:unset;background-size:initial;-webkit-print-color-adjust:unset;print-color-adjust:unset;padding-right:12px}[type=checkbox],[type=radio]{appearance:none;-webkit-print-color-adjust:exact;print-color-adjust:exact;vertical-align:middle;user-select:none;color:#2563eb;--tw-shadow:0 0 #0000;background-color:#fff;background-origin:border-box;border-width:1px;border-color:#6b7280;flex-shrink:0;width:16px;height:16px;padding:0;display:inline-block}[type=checkbox]{border-radius:0}[type=radio]{border-radius:100%}[type=checkbox]:focus,[type=radio]:focus{outline-offset:2px;--tw-ring-inset:var(--tw-empty, );--tw-ring-offset-width:2px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(2px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow);outline:2px solid #0000}[type=checkbox]:checked,[type=radio]:checked{background-color:currentColor;background-position:50%;background-repeat:no-repeat;background-size:100% 100%;border-color:#0000}[type=checkbox]:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e")}@media (forced-colors:active){[type=checkbox]:checked{appearance:auto}}[type=radio]:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e")}@media (forced-colors:active){[type=radio]:checked{appearance:auto}}[type=checkbox]:checked:hover,[type=checkbox]:checked:focus,[type=radio]:checked:hover,[type=radio]:checked:focus{background-color:currentColor;border-color:#0000}[type=checkbox]:indeterminate{background-color:currentColor;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");background-position:50%;background-repeat:no-repeat;background-size:100% 100%;border-color:#0000}@media (forced-colors:active){[type=checkbox]:indeterminate{appearance:auto}}[type=checkbox]:indeterminate:hover,[type=checkbox]:indeterminate:focus{background-color:currentColor;border-color:#0000}[type=file]{background:unset;border-color:inherit;font-size:unset;line-height:inherit;border-width:0;border-radius:0;padding:0}[type=file]:focus{outline:1px solid buttontext;outline:1px auto -webkit-focus-ring-color}input[type=number]{-webkit-appearance:none;margin:0;-moz-appearance:textfield!important}input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;-moz-appearance:textfield!important}input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;-moz-appearance:textfield!important}*,:before,:after,::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:#3b82f680;--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }.container{width:100%}@media (width>=640px){.container{max-width:640px}}@media (width>=768px){.container{max-width:768px}}@media (width>=1024px){.container{max-width:1024px}}@media (width>=1280px){.container{max-width:1280px}}@media (width>=1536px){.container{max-width:1536px}}.form-input,.form-textarea,.form-select,.form-multiselect{appearance:none;--tw-shadow:0 0 #0000;background-color:#fff;border-width:1px;border-color:#6b7280;border-radius:0;padding:8px 12px;font-size:16px;line-height:24px}.form-input:focus,.form-textarea:focus,.form-select:focus,.form-multiselect:focus{outline-offset:2px;--tw-ring-inset:var(--tw-empty, );--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:#2563eb;--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(1px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow);border-color:#2563eb;outline:2px solid #0000}.form-input::-moz-placeholder{color:#6b7280;opacity:1}.form-textarea::-moz-placeholder{color:#6b7280;opacity:1}.form-input::placeholder,.form-textarea::placeholder{color:#6b7280;opacity:1}.form-input::-webkit-datetime-edit-fields-wrapper{padding:0}.form-input::-webkit-date-and-time-value{text-align:inherit;min-height:1.5em}.form-input::-webkit-datetime-edit{display:inline-flex}.form-input::-webkit-datetime-edit{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-year-field{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-month-field{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-day-field{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-hour-field{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-minute-field{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-second-field{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-millisecond-field{padding-top:0;padding-bottom:0}.form-input::-webkit-datetime-edit-meridiem-field{padding-top:0;padding-bottom:0}.sr-only{clip:rect(0,0,0,0);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.invisible{visibility:hidden}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-y-0{top:0;bottom:0}.-bottom-3{bottom:-12px}.-top-1{top:-4px}.-top-6{top:-24px}.bottom-0{bottom:0}.left-0{left:0}.left-1\/2{left:50%}.right-0{right:0}.right-2{right:8px}.right-3{right:12px}.right-4{right:16px}.right-5{right:20px}.top-0{top:0}.top-1\/2{top:50%}.top-3{top:12px}.top-4{top:16px}.top-5{top:20px}.top-\[30px\]{top:30px}.top-\[41px\]{top:41px}.top-\[44px\]{top:44px}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.z-max{z-index:10000}.m-1{margin:4px}.-mx-1{margin-left:-4px;margin-right:-4px}.-mx-4{margin-left:-16px;margin-right:-16px}.-my-0{margin-top:0;margin-bottom:0}.-my-0\.5{margin-top:-2px;margin-bottom:-2px}.mx-2{margin-left:8px;margin-right:8px}.mx-4{margin-left:16px;margin-right:16px}.my-4{margin-top:16px;margin-bottom:16px}.-mb-1{margin-bottom:-4px}.-mr-3{margin-right:-12px}.-mt-4{margin-top:-16px}.mb-1{margin-bottom:4px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.ml-1{margin-left:4px}.ml-2{margin-left:8px}.mr-2{margin-right:8px}.mr-4{margin-right:16px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}.line-clamp-1{-webkit-line-clamp:1;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.line-clamp-2{-webkit-line-clamp:2;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.block{display:block}.inline-block{display:inline-block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.\!hidden{display:none!important}.hidden{display:none}.\!size-4{width:16px!important;height:16px!important}.size-4{width:16px;height:16px}.size-5{width:20px;height:20px}.size-6{width:24px;height:24px}.\!h-4{height:16px!important}.\!h-5{height:20px!important}.h-10{height:40px}.h-11{height:44px}.h-14{height:56px}.h-16{height:64px}.h-28{height:112px}.h-32{height:128px}.h-4{height:16px}.h-5{height:20px}.h-52{height:208px}.h-6{height:24px}.h-8{height:32px}.h-\[60px\]{height:60px}.h-\[80vh\]{height:80vh}.h-\[calc\(100vh-10rem\)\]{height:calc(100vh - 160px)}.h-full{height:100%}.h-screen{height:100vh}.max-h-60{max-height:240px}.max-h-\[650px\]{max-height:650px}.max-h-\[calc\(100vh-10rem\)\]{max-height:calc(100vh - 160px)}.max-h-\[calc\(100vh-200px\)\]{max-height:calc(100vh - 200px)}.max-h-\[calc\(100vh-6rem\)\]{max-height:calc(100vh - 96px)}.\!w-4{width:16px!important}.\!w-5{width:20px!important}.\!w-\[min\(528px\,calc\(100vw-80px\)\)\]{width:min(528px,100vw - 80px)!important}.w-1\/2{width:50%}.w-1\/3{width:33.3333%}.w-11{width:44px}.w-12{width:48px}.w-4{width:16px}.w-5{width:20px}.w-6{width:24px}.w-8{width:32px}.w-\[20px\]{width:20px}.w-fit{width:fit-content}.w-full{width:100%}.w-screen{width:100vw}.min-w-0{min-width:0}.min-w-\[208px\]{min-width:208px}.min-w-fit{min-width:fit-content}.max-w-\[208px\]{max-width:208px}.max-w-\[calc\(100vw-16px\)\]{max-width:calc(100vw - 16px)}.max-w-\[calc\(100vw-6rem\)\]{max-width:calc(100vw - 96px)}.max-w-lg{max-width:512px}.flex-1{flex:1}.flex-shrink-0,.shrink-0{flex-shrink:0}.flex-grow,.grow{flex-grow:1}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.translate-x-0{--tw-translate-x:0px;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.translate-x-1{--tw-translate-x:4px;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.translate-x-6{--tw-translate-x:24px;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.translate-x-full{--tw-translate-x:100%;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate:180deg;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.scale-100{--tw-scale-x:1;--tw-scale-y:1;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.scale-95{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}.\!transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))!important}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}@keyframes spin{to{transform:rotate(360deg)}}.animate-spin{animation:1s linear infinite spin}.cursor-grab{cursor:grab}.cursor-grabbing{cursor:grabbing}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.resize{resize:both}.appearance-none{appearance:none}.flex-row{flex-direction:row}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.flex-nowrap{flex-wrap:nowrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-start{justify-content:flex-start}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:4px}.gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}.gap-5{gap:20px}.gap-6{gap:24px}.gap-x-0{-moz-column-gap:0px;column-gap:0}.gap-x-1{-moz-column-gap:4px;column-gap:4px}.gap-x-1\.5{-moz-column-gap:6px;column-gap:6px}.gap-x-2{-moz-column-gap:8px;column-gap:8px}.gap-y-2{row-gap:8px}.space-x-1>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(4px*var(--tw-space-x-reverse));margin-left:calc(4px*calc(1 - var(--tw-space-x-reverse)))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(16px*calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(16px*var(--tw-space-y-reverse))}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-ebgray-100>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgb(227 227 227/var(--tw-divide-opacity))}.self-end{align-self:flex-end}.self-center{align-self:center}.justify-self-end{justify-self:end}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.overscroll-contain{overscroll-behavior:contain}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-line{white-space:pre-line}.\!rounded-2xl{border-radius:16px!important}.rounded-2xl{border-radius:16px}.rounded-\[4px\]{border-radius:4px}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:8px}.rounded-md{border-radius:6px}.rounded-xl{border-radius:12px}.border{border-width:1px}.border-0{border-width:0}.border-\[1px\]{border-width:1px}.border-b-2{border-bottom-width:2px}.border-l{border-left-width:1px}.border-t{border-top-width:1px}.border-none{border-style:none}.\!border-ebgray-100{--tw-border-opacity:1!important;border-color:rgb(227 227 227/var(--tw-border-opacity))!important}.border-ebgray-100{--tw-border-opacity:1;border-color:rgb(227 227 227/var(--tw-border-opacity))}.border-ebgray-300{--tw-border-opacity:1;border-color:rgb(164 164 164/var(--tw-border-opacity))}.border-ebgray-400{--tw-border-opacity:1;border-color:rgb(129 129 129/var(--tw-border-opacity))}.border-ebgreen-600{--tw-border-opacity:1;border-color:rgb(6 95 70/var(--tw-border-opacity))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235/var(--tw-border-opacity))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219/var(--tw-border-opacity))}.border-white{--tw-border-opacity:1;border-color:rgb(255 255 255/var(--tw-border-opacity))}.\!bg-white{--tw-bg-opacity:1!important;background-color:rgb(255 255 255/var(--tw-bg-opacity))!important}.bg-\[\#1E5F4E\]{--tw-bg-opacity:1;background-color:rgb(30 95 78/var(--tw-bg-opacity))}.bg-\[\#5D87F2\]{--tw-bg-opacity:1;background-color:rgb(93 135 242/var(--tw-bg-opacity))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity))}.bg-black\/25{background-color:#00000040}.bg-eberror-800{--tw-bg-opacity:1;background-color:rgb(153 27 27/var(--tw-bg-opacity))}.bg-ebgray-100{--tw-bg-opacity:1;background-color:rgb(227 227 227/var(--tw-bg-opacity))}.bg-ebgray-100\/50{background-color:#e3e3e380}.bg-ebgray-200{--tw-bg-opacity:1;background-color:rgb(200 200 200/var(--tw-bg-opacity))}.bg-ebgray-50{--tw-bg-opacity:1;background-color:rgb(247 247 247/var(--tw-bg-opacity))}.bg-ebgray-50\/10{background-color:#f7f7f71a}.bg-ebgray-600{--tw-bg-opacity:1;background-color:rgb(81 81 81/var(--tw-bg-opacity))}.bg-ebgray-700{--tw-bg-opacity:1;background-color:rgb(68 68 68/var(--tw-bg-opacity))}.bg-ebgray-900{--tw-bg-opacity:1;background-color:rgb(49 49 49/var(--tw-bg-opacity))}.bg-ebgreen-400{--tw-bg-opacity:1;background-color:rgb(96 161 134/var(--tw-bg-opacity))}.bg-ebgreen-600{--tw-bg-opacity:1;background-color:rgb(6 95 70/var(--tw-bg-opacity))}.bg-ebgreen-700{--tw-bg-opacity:1;background-color:rgb(6 78 59/var(--tw-bg-opacity))}.bg-ebgreen-700\/30{background-color:#064e3b4d}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235/var(--tw-bg-opacity))}.bg-transparent{background-color:#0000}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity))}.bg-opacity-25{--tw-bg-opacity:.25}.fill-ebgray-600{fill:#515151}.fill-ebgray-900{fill:#313131}.fill-white{fill:#fff}.\!p-0{padding:0!important}.p-0{padding:0}.p-1{padding:4px}.p-2{padding:8px}.p-3{padding:12px}.p-4{padding:16px}.p-6{padding:24px}.\!px-0{padding-left:0!important;padding-right:0!important}.\!px-10{padding-left:40px!important;padding-right:40px!important}.px-1{padding-left:4px;padding-right:4px}.px-2{padding-left:8px;padding-right:8px}.px-2\.5{padding-left:10px;padding-right:10px}.px-3{padding-left:12px;padding-right:12px}.px-3\.5{padding-left:14px;padding-right:14px}.px-4{padding-left:16px;padding-right:16px}.px-6{padding-left:24px;padding-right:24px}.py-1{padding-top:4px;padding-bottom:4px}.py-1\.5{padding-top:6px;padding-bottom:6px}.py-2{padding-top:8px;padding-bottom:8px}.py-2\.5{padding-top:10px;padding-bottom:10px}.py-4{padding-top:16px;padding-bottom:16px}.pb-1{padding-bottom:4px}.pb-16{padding-bottom:64px}.pb-2{padding-bottom:8px}.pb-4{padding-bottom:16px}.pl-10{padding-left:40px}.pl-2{padding-left:8px}.pl-3{padding-left:12px}.pl-4{padding-left:16px}.pr-2{padding-right:8px}.pr-4{padding-right:16px}.pr-8{padding-right:32px}.pt-1{padding-top:4px}.pt-2{padding-top:8px}.pt-4{padding-top:16px}.text-left{text-align:left}.text-center{text-align:center}.align-middle{vertical-align:middle}.font-serif{font-family:var(--font-playfair),ui-serif,Georgia}.\!text-xs{font-size:12px!important;line-height:16px!important}.text-2xl{font-size:24px;line-height:32px}.text-3xl{font-size:30px;line-height:36px}.text-4xl{font-size:36px;line-height:40px}.text-5xl{font-size:48px;line-height:1}.text-6xl{font-size:60px;line-height:1}.text-7xl{font-size:72px;line-height:1}.text-8xl{font-size:96px;line-height:1}.text-9xl{font-size:128px;line-height:1}.text-base{font-size:16px;line-height:24px}.text-lg{font-size:18px;line-height:28px}.text-sm{font-size:14px;line-height:20px}.text-xl{font-size:20px;line-height:28px}.text-xs{font-size:12px;line-height:16px}.\!font-normal{font-weight:400!important}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.lowercase{text-transform:lowercase}.italic{font-style:italic}.leading-5{line-height:20px}.leading-6{line-height:24px}.\!text-\[\#744FC2\]{--tw-text-opacity:1!important;color:rgb(116 79 194/var(--tw-text-opacity))!important}.\!text-ebgray-200{--tw-text-opacity:1!important;color:rgb(200 200 200/var(--tw-text-opacity))!important}.\!text-ebgray-400{--tw-text-opacity:1!important;color:rgb(129 129 129/var(--tw-text-opacity))!important}.\!text-ebgray-500{--tw-text-opacity:1!important;color:rgb(102 102 102/var(--tw-text-opacity))!important}.\!text-red-500{--tw-text-opacity:1!important;color:rgb(239 68 68/var(--tw-text-opacity))!important}.\!text-white{--tw-text-opacity:1!important;color:rgb(255 255 255/var(--tw-text-opacity))!important}.text-\[\#3A715D\]{--tw-text-opacity:1;color:rgb(58 113 93/var(--tw-text-opacity))}.text-\[\#744FC2\]{--tw-text-opacity:1;color:rgb(116 79 194/var(--tw-text-opacity))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246/var(--tw-text-opacity))}.text-eberror-800{--tw-text-opacity:1;color:rgb(153 27 27/var(--tw-text-opacity))}.text-ebgray-200{--tw-text-opacity:1;color:rgb(200 200 200/var(--tw-text-opacity))}.text-ebgray-300{--tw-text-opacity:1;color:rgb(164 164 164/var(--tw-text-opacity))}.text-ebgray-400{--tw-text-opacity:1;color:rgb(129 129 129/var(--tw-text-opacity))}.text-ebgray-50{--tw-text-opacity:1;color:rgb(247 247 247/var(--tw-text-opacity))}.text-ebgray-500{--tw-text-opacity:1;color:rgb(102 102 102/var(--tw-text-opacity))}.text-ebgray-600{--tw-text-opacity:1;color:rgb(81 81 81/var(--tw-text-opacity))}.text-ebgray-700{--tw-text-opacity:1;color:rgb(68 68 68/var(--tw-text-opacity))}.text-ebgray-900{--tw-text-opacity:1;color:rgb(49 49 49/var(--tw-text-opacity))}.text-ebgreen-300{--tw-text-opacity:1;color:rgb(137 191 167/var(--tw-text-opacity))}.text-ebgreen-400{--tw-text-opacity:1;color:rgb(96 161 134/var(--tw-text-opacity))}.text-ebgreen-550{--tw-text-opacity:1;color:rgb(30 111 88/var(--tw-text-opacity))}.text-ebgreen-600{--tw-text-opacity:1;color:rgb(6 95 70/var(--tw-text-opacity))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128/var(--tw-text-opacity))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94/var(--tw-text-opacity))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74/var(--tw-text-opacity))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68/var(--tw-text-opacity))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8/var(--tw-text-opacity))}.underline{text-decoration-line:underline}.underline-offset-auto{text-underline-offset:auto}.accent-ebgreen-600{accent-color:#065f46}.opacity-0{opacity:0}.opacity-100{opacity:1}.shadow{--tw-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px #00000040;--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 #0000000d;--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px #0000001a,0 4px 6px -4px #0000001a;--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 #0000000d;--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px #0000001a,0 8px 10px -6px #0000001a;--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline{outline-style:solid}.ring-1{--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(1px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-ebgray-200{--tw-ring-opacity:1;--tw-ring-color:rgb(200 200 200/var(--tw-ring-opacity))}.blur{--tw-blur:blur(8px);filter:var(--tw-blur)var(--tw-brightness)var(--tw-contrast)var(--tw-grayscale)var(--tw-hue-rotate)var(--tw-invert)var(--tw-saturate)var(--tw-sepia)var(--tw-drop-shadow)}.filter{filter:var(--tw-blur)var(--tw-brightness)var(--tw-contrast)var(--tw-grayscale)var(--tw-hue-rotate)var(--tw-invert)var(--tw-saturate)var(--tw-sepia)var(--tw-drop-shadow)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-duration:.15s;transition-timing-function:cubic-bezier(.4,0,.2,1)}.duration-100{transition-duration:.1s}.duration-200{transition-duration:.2s}.duration-300{transition-duration:.3s}.duration-75{transition-duration:75ms}.ease-in{transition-timing-function:cubic-bezier(.4,0,1,1)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}#plasmo-shadow-container{all:initial;color-scheme:light only;--font-inter:"EB Inter",sans-serif;--font-playfair:"EB Playfair Display",serif;font-family:var(--font-inter);user-select:text;display:block}.focus-within\:ring-2:focus-within{--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(2px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus-within\:ring-ebgreen-300:focus-within{--tw-ring-opacity:1;--tw-ring-color:rgb(137 191 167/var(--tw-ring-opacity))}.hover\:cursor-pointer:hover{cursor:pointer}.hover\:border-ebgreen-200:hover{--tw-border-opacity:1;border-color:rgb(182 217 200/var(--tw-border-opacity))}.hover\:border-ebgreen-700:hover{--tw-border-opacity:1;border-color:rgb(6 78 59/var(--tw-border-opacity))}.hover\:bg-eberror-800\/80:hover{background-color:#991b1bcc}.hover\:bg-ebgray-100:hover{--tw-bg-opacity:1;background-color:rgb(227 227 227/var(--tw-bg-opacity))}.hover\:bg-ebgray-100\/50:hover{background-color:#e3e3e380}.hover\:bg-ebgray-50:hover{--tw-bg-opacity:1;background-color:rgb(247 247 247/var(--tw-bg-opacity))}.hover\:bg-ebgray-700:hover{--tw-bg-opacity:1;background-color:rgb(68 68 68/var(--tw-bg-opacity))}.hover\:bg-ebgray-800:hover{--tw-bg-opacity:1;background-color:rgb(56 56 56/var(--tw-bg-opacity))}.hover\:bg-ebgreen-50:hover{--tw-bg-opacity:1;background-color:rgb(244 249 247/var(--tw-bg-opacity))}.hover\:bg-ebgreen-700:hover{--tw-bg-opacity:1;background-color:rgb(6 78 59/var(--tw-bg-opacity))}.hover\:bg-white\/\[0\.12\]:hover{background-color:#ffffff1f}.hover\:text-blue-700:hover{--tw-text-opacity:1;color:rgb(29 78 216/var(--tw-text-opacity))}.hover\:text-ebgray-100:hover{--tw-text-opacity:1;color:rgb(227 227 227/var(--tw-text-opacity))}.hover\:text-ebgray-200:hover{--tw-text-opacity:1;color:rgb(200 200 200/var(--tw-text-opacity))}.hover\:text-ebgray-700:hover{--tw-text-opacity:1;color:rgb(68 68 68/var(--tw-text-opacity))}.hover\:text-ebgreen-200:hover{--tw-text-opacity:1;color:rgb(182 217 200/var(--tw-text-opacity))}.hover\:text-ebgreen-700:hover{--tw-text-opacity:1;color:rgb(6 78 59/var(--tw-text-opacity))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81/var(--tw-text-opacity))}.hover\:text-red-700:hover{--tw-text-opacity:1;color:rgb(185 28 28/var(--tw-text-opacity))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}.focus\:border-ebgreen-400:focus{--tw-border-opacity:1;border-color:rgb(96 161 134/var(--tw-border-opacity))}.focus\:outline-none:focus{outline-offset:2px;outline:2px solid #0000}.focus\:ring-0:focus{--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(0px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-ebgreen-400:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(96 161 134/var(--tw-ring-opacity))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:bg-ebgray-100:disabled{--tw-bg-opacity:1;background-color:rgb(227 227 227/var(--tw-bg-opacity))}.disabled\:text-ebgray-400:disabled{--tw-text-opacity:1;color:rgb(129 129 129/var(--tw-text-opacity))}.disabled\:opacity-50:disabled{opacity:.5}.has-\[\:focus\]\:border-ebgreen-400:has(:focus){--tw-border-opacity:1;border-color:rgb(96 161 134/var(--tw-border-opacity))}.has-\[\:disabled\]\:opacity-50:has(:disabled){opacity:.5}.has-\[\:focus\]\:outline-none:has(:focus){outline-offset:2px;outline:2px solid #0000}.has-\[\:focus\]\:ring-ebgreen-400:has(:focus){--tw-ring-opacity:1;--tw-ring-color:rgb(96 161 134/var(--tw-ring-opacity))}.data-\[checked\]\:bg-blue-600[data-checked]{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity))}.data-\[focus\]\:bg-ebgray-100\/50[data-focus]{background-color:#e3e3e380}.data-\[selected\]\:bg-white[data-selected]{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity))}.data-\[selected\]\:text-ebgray-900[data-selected]{--tw-text-opacity:1;color:rgb(49 49 49/var(--tw-text-opacity))}.data-\[selected\]\:text-ebgreen-400[data-selected]{--tw-text-opacity:1;color:rgb(96 161 134/var(--tw-text-opacity))}.data-\[selected\]\:shadow-md[data-selected]{--tw-shadow:0 4px 6px -1px #0000001a,0 2px 4px -2px #0000001a;--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.group[data-checked] .group-data-\[checked\]\:translate-x-6{--tw-translate-x:24px;transform:translate(var(--tw-translate-x),var(--tw-translate-y))rotate(var(--tw-rotate))skewX(var(--tw-skew-x))skewY(var(--tw-skew-y))scaleX(var(--tw-scale-x))scaleY(var(--tw-scale-y))}@media (width>=640px){.sm\:top-7{top:28px}.sm\:top-\[39px\]{top:39px}.sm\:text-sm{font-size:14px;line-height:20px}}@media (width>=768px){.md\:right-6{right:24px}.md\:top-6{top:24px}.md\:h-4{height:16px}.md\:h-5{height:20px}.md\:w-3\/5{width:60%}.md\:w-4{width:16px}.md\:w-5{width:20px}.md\:min-w-\[768px\]{min-width:768px}.md\:max-w-\[1024px\]{max-width:1024px}.md\:gap-x-1{-moz-column-gap:4px;column-gap:4px}.md\:gap-x-1\.5{-moz-column-gap:6px;column-gap:6px}.md\:gap-x-2{-moz-column-gap:8px;column-gap:8px}.md\:px-6{padding-left:24px;padding-right:24px}.md\:pb-4{padding-bottom:16px}.md\:pt-6{padding-top:24px}.md\:text-2xl{font-size:24px;line-height:32px}.md\:text-3xl{font-size:30px;line-height:36px}.md\:text-4xl{font-size:36px;line-height:40px}.md\:text-5xl{font-size:48px;line-height:1}.md\:text-6xl{font-size:60px;line-height:1}.md\:text-7xl{font-size:72px;line-height:1}.md\:text-8xl{font-size:96px;line-height:1}.md\:text-9xl{font-size:128px;line-height:1}.md\:text-base{font-size:16px;line-height:24px}.md\:text-lg{font-size:18px;line-height:28px}.md\:text-sm{font-size:14px;line-height:20px}.md\:text-xl{font-size:20px;line-height:28px}.md\:text-xs{font-size:12px;line-height:16px}}.\[\&\:not\(\[data-selected\]\)\]\:hover\:text-ebgray-700:hover:not([data-selected]){--tw-text-opacity:1;color:rgb(68 68 68/var(--tw-text-opacity))}</style><div id="plasmo-shadow-container" style="z-index: 2147483647; position: relative;"><div id="plasmo-inline" class="plasmo-csui-container" style="display: flex; position: relative; top: 0px; left: 0px;"><div role="button" tabindex="0" class="fixed top-0 z-max
+        right-0 
+        cursor-pointer" style="transform: translate3d(2544px, 573.6px, 0px) translateX(20px); transition: 0.3s;"><svg width="80" height="60" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#widget_svg__a)"><path d="M0 8a8 8 0 0 1 8-8h72v60H8a8 8 0 0 1-8-8V8Z" fill="#3A715D"></path><g filter="url(#widget_svg__b)"><circle cx="55.875" cy="16.875" r="20.25" fill="#3A715D"></circle><circle cx="55.875" cy="16.875" r="20.063" stroke="#fff" stroke-opacity="0.08" stroke-width="0.375"></circle></g><g filter="url(#widget_svg__c)"><path d="M16.5 44.438-2.344 55.316V33.558L16.5 44.438Z" fill="#3A715D"></path><path d="m-2.156 33.883 18.281 10.554-18.281 10.555v-21.11Z" stroke="#fff" stroke-opacity="0.08" stroke-width="0.375"></path></g><path d="M18.307 17c-.046.5-.081.984-.104 1.45-.012.466-.018.825-.018 1.075 0 .227.006.443.018.648.011.205.023.375.035.512h-.4c-.117-.83-.296-1.484-.54-1.962-.243-.489-.562-.83-.957-1.024-.382-.204-.835-.307-1.357-.307h-.713c-.336 0-.591.029-.765.086a.517.517 0 0 0-.348.34c-.058.171-.087.433-.087.786v8.87c0 .353.029.615.087.785.058.17.174.285.348.341.174.057.429.086.765.086h.853c.521 0 .98-.108 1.374-.324.406-.228.748-.609 1.026-1.143.29-.535.51-1.257.661-2.167h.4c-.034.364-.052.842-.052 1.433 0 .262.006.631.018 1.109.011.478.046.972.104 1.484a52.65 52.65 0 0 0-2-.034c-.743-.011-1.404-.017-1.984-.017h-1.113c-.452 0-.94.006-1.461.017-.522 0-1.05.006-1.583.017-.534 0-1.038.006-1.514.017v-.341c.371-.023.65-.068.835-.137a.574.574 0 0 0 .365-.409c.07-.205.105-.512.105-.921v-8.462c0-.42-.035-.728-.105-.92a.574.574 0 0 0-.382-.41c-.186-.08-.458-.125-.818-.137V17l1.514.034c.533 0 1.06.006 1.583.017h4.384A71.455 71.455 0 0 0 18.306 17Zm-2.714 5.834v.341H12.55v-.34h3.044Zm.505-2.252a22.47 22.47 0 0 0-.07 1.485c.012.34.018.654.018.938 0 .284.005.597.017.938.012.341.04.836.087 1.484h-.4a3.858 3.858 0 0 0-.33-1.108 1.938 1.938 0 0 0-.662-.82c-.29-.215-.667-.323-1.13-.323v-.342c.347 0 .643-.068.887-.204a1.85 1.85 0 0 0 .591-.563c.162-.24.29-.49.383-.751.093-.261.162-.506.209-.733h.4ZM21.904 29.198c-.521 0-.956-.097-1.304-.29a1.823 1.823 0 0 1-.766-.768 2.4 2.4 0 0 1-.243-1.075c0-.489.11-.887.33-1.194.232-.307.528-.557.887-.75.36-.194.737-.353 1.131-.478a165.8 165.8 0 0 0 1.148-.359c.372-.125.667-.267.888-.426.232-.17.348-.387.348-.648v-1.331c0-.296-.053-.557-.157-.785a1.065 1.065 0 0 0-.452-.546c-.197-.125-.458-.187-.783-.187-.232 0-.464.034-.696.102-.232.057-.423.16-.574.307.325.114.574.29.748.529.186.227.278.489.278.785 0 .386-.139.694-.417.92a1.426 1.426 0 0 1-.957.342c-.418 0-.736-.125-.957-.375a1.458 1.458 0 0 1-.313-.939c0-.33.081-.602.244-.818.174-.216.411-.421.713-.614a4.335 4.335 0 0 1 1.166-.427 6.933 6.933 0 0 1 1.496-.153c.533 0 1.014.056 1.444.17.429.102.788.296 1.078.58.267.262.44.586.522.973.081.375.122.853.122 1.433v4.64c0 .284.029.483.087.597.058.102.156.153.295.153a.557.557 0 0 0 .296-.085 3.79 3.79 0 0 0 .33-.205l.175.29a2.694 2.694 0 0 1-.853.478 3.406 3.406 0 0 1-1.06.154c-.43 0-.772-.057-1.027-.171a1.242 1.242 0 0 1-.557-.495 1.557 1.557 0 0 1-.157-.716 3.31 3.31 0 0 1-1.009 1.023c-.394.24-.875.359-1.444.359Zm1.236-1.092c.232 0 .44-.052.626-.154.197-.114.383-.296.557-.546V23.91c-.105.17-.25.324-.435.46-.186.137-.383.28-.592.427-.209.137-.412.29-.609.46-.185.171-.336.382-.452.632-.116.25-.174.552-.174.904 0 .444.099.773.296.99.197.216.458.324.783.324ZM34.144 20.02c.371 0 .673.08.905.238.232.148.4.342.504.58.116.24.174.49.174.751 0 .42-.127.768-.382 1.04-.244.262-.569.393-.975.393-.405 0-.724-.097-.956-.29-.22-.205-.33-.472-.33-.802 0-.318.069-.58.208-.785.15-.216.336-.398.557-.545a.793.793 0 0 0-.487.017 1.39 1.39 0 0 0-.627.273 1.854 1.854 0 0 0-.504.528 2.67 2.67 0 0 0-.33.683 2.166 2.166 0 0 0-.123.7v4.52c0 .546.134.915.4 1.109.279.193.69.29 1.236.29v.358a62.053 62.053 0 0 0-1.166-.034 35.906 35.906 0 0 0-1.6-.034c-.464 0-.934.011-1.41.034a51.6 51.6 0 0 0-1.078.034v-.358c.406 0 .69-.085.852-.256.174-.17.261-.495.261-.972v-5.374c0-.512-.08-.887-.243-1.126-.151-.25-.441-.375-.87-.375v-.359c.371.035.73.052 1.078.052.488 0 .94-.017 1.357-.052.43-.045.824-.108 1.183-.187v1.586a3.11 3.11 0 0 1 .557-.836c.232-.25.499-.443.8-.58a2.262 2.262 0 0 1 1.01-.221ZM42.404 20.02c.487 0 .881.062 1.183.187.313.114.557.273.73.478.186.216.32.495.4.836.094.341.14.802.14 1.382v4.589c0 .477.081.801.243.972.175.17.464.256.87.256v.358c-.22-.011-.55-.023-.991-.034a25.255 25.255 0 0 0-2.61 0c-.417.011-.736.023-.956.034v-.358c.347 0 .591-.085.73-.256.14-.17.209-.495.209-.972v-5.306c0-.284-.03-.529-.087-.733a.882.882 0 0 0-.313-.495c-.151-.125-.377-.188-.679-.188-.313 0-.603.085-.87.256-.255.17-.463.41-.626.716-.15.296-.226.632-.226 1.007v4.743c0 .477.07.801.209.972.15.17.394.256.73.256v.358a37.954 37.954 0 0 0-.922-.034 21.426 21.426 0 0 0-1.235-.034c-.44 0-.893.011-1.357.034-.463.011-.811.023-1.043.034v-.358c.406 0 .69-.085.852-.256.174-.17.261-.495.261-.972v-5.374c0-.512-.081-.887-.244-1.126-.15-.25-.44-.375-.87-.375v-.359c.372.035.731.052 1.08.052.486 0 .939-.017 1.356-.052.43-.045.823-.108 1.183-.187v1.535c.29-.58.684-.99 1.183-1.228a3.816 3.816 0 0 1 1.67-.358ZM9 30.315a84.52 84.52 0 0 0 2.644.052c.557 0 1.096-.006 1.618-.018.522-.01.893-.017 1.114-.017 1.438 0 2.51.25 3.218.751.719.5 1.078 1.143 1.078 1.928 0 .398-.121.802-.365 1.211-.243.41-.62.773-1.13 1.092-.511.318-1.172.551-1.984.7v.033c1.09.08 1.954.273 2.592.58.638.307 1.096.677 1.375 1.11.278.431.417.88.417 1.347 0 .716-.191 1.32-.574 1.808-.383.49-.934.865-1.653 1.126-.719.25-1.577.376-2.574.376-.279 0-.679-.006-1.2-.017a44.473 44.473 0 0 0-1.897-.035c-.51 0-1.009.006-1.496.017-.487 0-.881.012-1.183.035v-.342c.371-.022.65-.068.835-.136a.574.574 0 0 0 .365-.41c.07-.204.105-.511.105-.92v-8.462c0-.421-.035-.728-.105-.922a.574.574 0 0 0-.382-.409c-.186-.08-.458-.125-.818-.136v-.342Zm5.15.342c-.453 0-.749.096-.888.29-.127.193-.191.585-.191 1.177v8.461c0 .398.029.7.087.904.07.205.185.342.348.41.174.068.429.102.765.102.835 0 1.444-.256 1.827-.767.394-.524.591-1.263.591-2.218 0-.876-.226-1.553-.678-2.03-.44-.478-1.177-.717-2.21-.717h-1.478V35.98h1.496c.545 0 .962-.125 1.252-.375.29-.262.493-.603.61-1.024.115-.432.173-.892.173-1.381 0-.842-.133-1.473-.4-1.894-.267-.432-.702-.648-1.305-.648ZM24.655 33.335c1.02 0 1.82.296 2.4.887.58.591.87 1.558.87 2.9h-5.723l-.035-.324h3.566a8.007 8.007 0 0 0-.104-1.535c-.081-.478-.209-.859-.383-1.143-.174-.285-.406-.427-.696-.427-.406 0-.754.25-1.044.75-.278.501-.446 1.332-.504 2.492l.052.102-.035.426v.461c0 .785.11 1.422.33 1.91.233.49.523.848.87 1.075.349.217.702.325 1.062.325.244 0 .493-.035.748-.103.267-.08.534-.216.8-.41.267-.204.516-.488.748-.852l.313.102c-.139.432-.36.853-.66 1.263-.302.409-.685.744-1.149 1.006-.464.262-1.02.392-1.67.392-.789 0-1.484-.164-2.088-.494-.603-.33-1.078-.83-1.426-1.502-.336-.67-.505-1.524-.505-2.559 0-1.057.18-1.939.54-2.644.37-.705.875-1.228 1.513-1.57.65-.352 1.386-.528 2.21-.528ZM32.116 30.776v2.798h2.053v.341h-2.053v6.892c0 .341.064.586.191.734.128.136.32.204.575.204.208 0 .417-.074.626-.221.209-.16.394-.427.556-.802l.296.153c-.185.512-.47.933-.852 1.263-.371.33-.882.494-1.531.494-.383 0-.72-.05-1.01-.153a1.789 1.789 0 0 1-.73-.427 1.813 1.813 0 0 1-.504-.92c-.081-.376-.122-.86-.122-1.45v-5.767H28.15v-.341h1.461v-2.252c.487 0 .934-.04 1.34-.12a4.443 4.443 0 0 0 1.165-.426Z" fill="#fff"></path><path d="M37.392 30.776v2.798h2.052v.341h-2.053v6.892c0 .341.064.586.192.734.127.136.319.204.574.204.209 0 .417-.074.626-.221.209-.16.395-.427.557-.802l.296.153c-.186.512-.47.933-.853 1.263-.371.33-.881.494-1.53.494-.383 0-.72-.05-1.01-.153a1.789 1.789 0 0 1-.73-.427 1.814 1.814 0 0 1-.505-.92c-.081-.376-.122-.86-.122-1.45v-5.767h-1.46v-.341h1.46v-2.252c.487 0 .934-.04 1.34-.12a4.446 4.446 0 0 0 1.166-.426ZM44.048 33.335c1.02 0 1.821.296 2.401.887.58.591.87 1.558.87 2.9h-5.724l-.034-.324h3.566a7.998 7.998 0 0 0-.105-1.535c-.08-.478-.208-.859-.382-1.143-.174-.285-.406-.427-.696-.427-.406 0-.754.25-1.044.75-.278.501-.446 1.332-.504 2.492l.052.102-.035.426v.461c0 .785.11 1.422.33 1.91.232.49.523.848.87 1.075a1.99 1.99 0 0 0 1.062.325c.243 0 .492-.035.748-.103.266-.08.533-.216.8-.41.267-.204.516-.488.748-.852l.313.102a4.41 4.41 0 0 1-.661 1.263c-.301.409-.684.744-1.148 1.006-.464.262-1.02.392-1.67.392-.789 0-1.485-.164-2.088-.494-.603-.33-1.078-.83-1.426-1.502-.337-.67-.505-1.524-.505-2.559 0-1.057.18-1.939.54-2.644.37-.705.875-1.228 1.513-1.57.65-.352 1.386-.528 2.21-.528ZM53.86 33.335c.372 0 .673.08.905.239.232.148.4.341.505.58.116.239.174.489.174.75 0 .421-.128.768-.383 1.041-.243.262-.568.392-.974.392s-.725-.096-.957-.29c-.22-.204-.33-.472-.33-.801 0-.319.07-.58.208-.785.151-.216.337-.398.557-.546a.794.794 0 0 0-.487.017c-.22.034-.43.125-.626.273a1.856 1.856 0 0 0-.505.529c-.139.204-.25.432-.33.682a2.166 2.166 0 0 0-.122.7v4.52c0 .546.133.916.4 1.11.278.193.69.29 1.235.29v.358a62.98 62.98 0 0 0-1.166-.035 36.057 36.057 0 0 0-1.6-.034c-.464 0-.933.012-1.41.034-.475.012-.834.023-1.078.035v-.359c.406 0 .69-.085.853-.256.174-.17.26-.494.26-.972v-5.374c0-.511-.08-.887-.243-1.126-.15-.25-.44-.375-.87-.375v-.358c.372.034.731.051 1.079.051.487 0 .94-.017 1.357-.051.429-.046.823-.108 1.183-.188v1.587c.139-.307.325-.586.556-.836.232-.25.5-.444.8-.58a2.261 2.261 0 0 1 1.01-.222Z" fill="#fff"></path></g><path opacity="0.8" fill="#253C34" d="M60 0h20v60H60z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M63.792 28.44a.6.6 0 0 0 .848-.032l1.56-1.68V33.6a.6.6 0 1 0 1.2 0v-6.872l1.56 1.68a.6.6 0 0 0 .88-.816l-2.6-2.8a.6.6 0 0 0-.88 0l-2.6 2.8a.6.6 0 0 0 .032.848Zm6.4 5.12a.6.6 0 0 0-.032.848l2.6 2.8a.6.6 0 0 0 .88 0l2.6-2.8a.6.6 0 0 0-.88-.816l-1.56 1.68V28.4a.6.6 0 1 0-1.2 0v6.872l-1.56-1.68a.6.6 0 0 0-.848-.032Z" fill="#89BFA7"></path><defs><filter id="widget_svg__b" x="28.125" y="-3.375" width="55.5" height="55.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feflood flood-opacity="0" result="BackgroundImageFix"></feflood><fecolormatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></fecolormatrix><femorphology radius="1.875" in="SourceAlpha" result="effect1_dropShadow_16273_23865"></femorphology><feoffset dy="3.75"></feoffset><fegaussianblur stdDeviation="1.875"></fegaussianblur><fecolormatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0"></fecolormatrix><feblend in2="BackgroundImageFix" result="effect1_dropShadow_16273_23865"></feblend><fecolormatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></fecolormatrix><femorphology radius="1.875" in="SourceAlpha" result="effect2_dropShadow_16273_23865"></femorphology><feoffset dy="7.5"></feoffset><fegaussianblur stdDeviation="4.688"></fegaussianblur><fecolormatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.29 0"></fecolormatrix><feblend in2="effect1_dropShadow_16273_23865" result="effect2_dropShadow_16273_23865"></feblend><feblend in="SourceGraphic" in2="effect2_dropShadow_16273_23865" result="shape"></feblend></filter><filter id="widget_svg__c" x="-9.844" y="33.558" width="33.844" height="36.759" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feflood flood-opacity="0" result="BackgroundImageFix"></feflood><fecolormatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></fecolormatrix><femorphology radius="1.875" in="SourceAlpha" result="effect1_dropShadow_16273_23865"></femorphology><feoffset dy="3.75"></feoffset><fegaussianblur stdDeviation="1.875"></fegaussianblur><fecolormatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0"></fecolormatrix><feblend in2="BackgroundImageFix" result="effect1_dropShadow_16273_23865"></feblend><fecolormatrix in="SourceAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></fecolormatrix><femorphology radius="1.875" in="SourceAlpha" result="effect2_dropShadow_16273_23865"></femorphology><feoffset dy="7.5"></feoffset><fegaussianblur stdDeviation="4.688"></fegaussianblur><fecolormatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></fecolormatrix><feblend in2="effect1_dropShadow_16273_23865" result="effect2_dropShadow_16273_23865"></feblend><feblend in="SourceGraphic" in2="effect2_dropShadow_16273_23865" result="shape"></feblend></filter><clippath id="widget_svg__a"><path d="M0 8a8 8 0 0 1 8-8h72v60H8a8 8 0 0 1-8-8V8Z" fill="#fff"></path></clippath></defs></svg><div class="absolute right-0 top-0 h-[60px] w-[20px] cursor-grab"></div></div><div class="fixed right-3 top-3 max-w-[calc(100vw-6rem)] overflow-hidden rounded-lg shadow-xl" style="transform: translate(2544px, 0px); transition: transform 0.3s;"><div class="flex h-16 items-center justify-between bg-ebgreen-700 p-4"><div class="flex items-center gap-2"><svg width="107" height="16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.796 0c-.059.65-.103 1.278-.132 1.884a61.808 61.808 0 0 0-.022 1.396c0 .295.007.576.022.842.014.266.03.487.044.665H11.2c-.147-1.079-.375-1.928-.684-2.549-.308-.635-.713-1.078-1.212-1.33C8.82.644 8.246.51 7.585.51H6.68c-.426 0-.75.037-.97.11a.664.664 0 0 0-.441.444c-.074.221-.11.561-.11 1.02v11.523c0 .458.036.797.11 1.019.073.222.22.37.44.443.221.074.545.111.97.111h1.081c.662 0 1.242-.14 1.742-.421.514-.296.948-.79 1.3-1.485.368-.694.648-1.632.839-2.814h.507a20.907 20.907 0 0 0-.066 1.861c0 .34.007.82.022 1.44.014.621.059 1.264.132 1.929-.75-.03-1.595-.045-2.536-.045-.94-.014-1.778-.022-2.513-.022H5.777c-.573 0-1.19.008-1.852.022-.662 0-1.33.008-2.007.023-.676 0-1.315.007-1.918.022v-.444c.47-.029.823-.088 1.058-.177.236-.088.39-.266.463-.532.089-.266.133-.664.133-1.196V2.349c0-.547-.044-.945-.133-1.197A.738.738 0 0 0 1.036.62C.801.517.456.458 0 .443V0c.603.015 1.242.03 1.918.044.676 0 1.345.008 2.007.022H9.48A87.965 87.965 0 0 0 11.796 0Zm-3.44 7.579v.443H4.498V7.58h3.858Zm.64-2.925a29.913 29.913 0 0 0-.088 1.928c.014.443.022.85.022 1.219 0 .369.007.775.022 1.218.015.444.051 1.086.11 1.928h-.507a5.106 5.106 0 0 0-.419-1.44 2.508 2.508 0 0 0-.838-1.064c-.367-.28-.845-.42-1.433-.42v-.444c.441 0 .816-.089 1.124-.266a2.37 2.37 0 0 0 .75-.731c.206-.31.368-.636.485-.975.118-.34.206-.658.265-.953h.507ZM16.356 15.845c-.662 0-1.213-.126-1.654-.377a2.339 2.339 0 0 1-.97-.997 3.182 3.182 0 0 1-.309-1.396c0-.635.14-1.153.419-1.551a3.435 3.435 0 0 1 1.124-.975 8.24 8.24 0 0 1 1.434-.621c.514-.163 1-.318 1.455-.465.47-.163.845-.348 1.124-.554.294-.222.441-.503.441-.843V6.338c0-.384-.066-.724-.198-1.02a1.376 1.376 0 0 0-.573-.709c-.25-.162-.581-.243-.993-.243-.293 0-.587.044-.881.133a1.526 1.526 0 0 0-.728.399c.412.147.727.376.948.686.235.296.353.636.353 1.02 0 .502-.177.901-.53 1.197a1.781 1.781 0 0 1-1.212.443c-.53 0-.934-.163-1.213-.488-.264-.34-.397-.746-.397-1.219 0-.428.103-.783.309-1.063.22-.281.522-.547.904-.798a5.415 5.415 0 0 1 1.477-.554c.588-.133 1.22-.2 1.896-.2.677 0 1.287.074 1.83.222.544.133 1 .384 1.368.754.338.34.558.76.661 1.263.103.487.154 1.108.154 1.861v6.028c0 .37.037.628.11.775.074.133.2.2.375.2a.693.693 0 0 0 .375-.11 4.79 4.79 0 0 0 .42-.267l.22.377a3.391 3.391 0 0 1-1.08.62c-.398.133-.846.2-1.346.2-.544 0-.977-.074-1.3-.222-.324-.162-.56-.377-.706-.642a2.065 2.065 0 0 1-.199-.931 4.25 4.25 0 0 1-1.278 1.33c-.5.31-1.11.465-1.83.465Zm1.565-1.418c.294 0 .559-.067.794-.2.25-.148.485-.384.705-.709V8.975a2.104 2.104 0 0 1-.55.598 52.2 52.2 0 0 1-.75.554 7.219 7.219 0 0 0-.772.599 2.56 2.56 0 0 0-.573.82c-.147.325-.221.716-.221 1.174 0 .576.125 1.005.375 1.285.25.281.58.422.992.422ZM31.869 3.922c.47 0 .852.104 1.146.31.294.193.507.444.64.754.147.31.22.635.22.975 0 .547-.162.997-.485 1.352-.309.34-.72.51-1.235.51-.514 0-.919-.126-1.212-.377-.28-.266-.42-.613-.42-1.042 0-.413.089-.753.265-1.019.191-.28.427-.517.706-.71a.982.982 0 0 0-.618.023 1.74 1.74 0 0 0-.793.355c-.25.177-.463.406-.64.687a3.514 3.514 0 0 0-.419.886c-.103.31-.154.613-.154.909v5.872c0 .71.169 1.19.507 1.44.353.252.875.377 1.566.377v.466c-.338-.015-.83-.03-1.478-.045a44.573 44.573 0 0 0-2.028-.044c-.588 0-1.184.015-1.786.044-.603.015-1.058.03-1.367.045v-.466c.514 0 .874-.11 1.08-.332.22-.222.33-.643.33-1.263v-6.98c0-.666-.102-1.153-.308-1.463-.19-.325-.558-.488-1.102-.488v-.465c.47.044.926.066 1.367.066.617 0 1.19-.022 1.72-.066.544-.06 1.043-.14 1.499-.244v2.06c.176-.398.412-.76.706-1.085a3.14 3.14 0 0 1 1.014-.753 2.807 2.807 0 0 1 1.279-.289ZM42.337 3.922c.618 0 1.117.082 1.5.244.396.148.705.355.926.62.235.281.404.643.507 1.087.117.443.176 1.041.176 1.795v5.96c0 .621.103 1.042.309 1.264.22.222.588.332 1.102.332v.466c-.279-.015-.698-.03-1.257-.045a31.353 31.353 0 0 0-3.307 0c-.529.015-.933.03-1.212.045v-.466c.44 0 .75-.11.926-.332.176-.222.264-.643.264-1.263V6.737c0-.37-.037-.687-.11-.953-.074-.28-.206-.495-.397-.643-.191-.162-.478-.243-.86-.243-.397 0-.764.11-1.102.332a2.474 2.474 0 0 0-.794.93c-.191.385-.287.82-.287 1.308v6.16c0 .621.089 1.042.265 1.264.191.222.5.332.926.332v.466c-.265-.015-.654-.03-1.169-.045-.5-.03-1.021-.044-1.565-.044-.559 0-1.132.015-1.72.044-.588.015-1.029.03-1.323.045v-.466c.515 0 .875-.11 1.08-.332.221-.222.331-.643.331-1.263v-6.98c0-.666-.103-1.153-.308-1.463-.191-.325-.559-.488-1.103-.488v-.465c.47.044.926.066 1.367.066.618 0 1.19-.022 1.72-.066.544-.06 1.044-.14 1.5-.244v1.994c.367-.753.867-1.285 1.499-1.595.632-.31 1.337-.466 2.116-.466ZM47.458 0c.383.015.882.03 1.5.044.617.015 1.234.022 1.852.022.705 0 1.389-.007 2.05-.022a72.563 72.563 0 0 1 1.411-.022c1.823 0 3.183.325 4.08.975.91.65 1.367 1.485 1.367 2.504 0 .517-.155 1.042-.464 1.574-.308.532-.786 1.004-1.433 1.418-.646.414-1.484.717-2.513.909v.044c1.381.103 2.477.355 3.285.753.808.4 1.389.88 1.742 1.44.353.562.529 1.146.529 1.752 0 .93-.242 1.713-.728 2.349-.485.635-1.183 1.122-2.094 1.462-.912.325-2 .488-3.264.488-.352 0-.86-.008-1.52-.022a55.027 55.027 0 0 0-2.404-.045c-.647 0-1.279.008-1.896.022-.618 0-1.117.015-1.5.045v-.444c.47-.029.824-.088 1.059-.177.235-.088.39-.266.463-.532.088-.266.132-.664.132-1.196V2.349c0-.547-.044-.945-.132-1.197a.738.738 0 0 0-.485-.532c-.236-.103-.581-.162-1.037-.177V0Zm6.527.443c-.574 0-.948.126-1.125.377-.161.251-.242.76-.242 1.529v10.992c0 .517.036.908.11 1.174.088.266.235.443.441.532.22.089.544.133.97.133 1.058 0 1.83-.332 2.315-.997.5-.68.75-1.64.75-2.881 0-1.138-.287-2.017-.86-2.637-.559-.62-1.492-.93-2.8-.93H51.67v-.378h1.896c.69 0 1.22-.162 1.587-.487.368-.34.625-.783.772-1.33.147-.561.22-1.16.22-1.795 0-1.093-.169-1.913-.507-2.46C55.3.724 54.75.443 53.985.443ZM67.3 3.922c1.293 0 2.307.385 3.042 1.153.735.768 1.103 2.024 1.103 3.767H64.19l-.044-.421h4.52c.014-.724-.03-1.389-.133-1.994-.103-.62-.264-1.116-.485-1.485-.22-.37-.514-.554-.882-.554-.514 0-.955.325-1.323.975-.352.65-.566 1.728-.64 3.235l.067.133c-.015.178-.03.362-.044.554v.599c0 1.019.14 1.846.419 2.482.294.635.661 1.1 1.102 1.396.441.28.89.42 1.345.42.309 0 .625-.043.948-.132a3.36 3.36 0 0 0 1.015-.532c.338-.266.654-.635.948-1.108l.397.133a5.779 5.779 0 0 1-.838 1.64 4.601 4.601 0 0 1-1.456 1.307c-.588.34-1.293.51-2.116.51-1 0-1.882-.214-2.646-.643-.764-.428-1.367-1.078-1.808-1.95-.426-.871-.64-1.98-.64-3.324 0-1.374.228-2.519.684-3.435.47-.916 1.11-1.595 1.918-2.039.823-.458 1.757-.687 2.8-.687ZM76.756.598v3.635h2.602v.443h-2.602v8.953c0 .443.081.76.243.953.162.177.404.266.728.266.264 0 .529-.096.793-.288.265-.207.5-.555.706-1.042l.375.2c-.236.664-.596 1.21-1.08 1.64-.471.428-1.118.642-1.941.642-.485 0-.911-.066-1.279-.2a2.257 2.257 0 0 1-.926-.554 2.372 2.372 0 0 1-.64-1.196c-.102-.488-.154-1.116-.154-1.884v-7.49H71.73v-.443h1.852V1.307a8.63 8.63 0 0 0 1.698-.155 5.546 5.546 0 0 0 1.477-.554Z" fill="#F4F0E8"></path><path d="M83.442.598v3.635h2.602v.443h-2.602v8.953c0 .443.081.76.243.953.162.177.404.266.728.266.264 0 .529-.096.793-.288.265-.207.5-.555.706-1.042l.375.2c-.235.664-.596 1.21-1.08 1.64-.471.428-1.118.642-1.94.642-.486 0-.912-.066-1.28-.2a2.256 2.256 0 0 1-.926-.554 2.372 2.372 0 0 1-.64-1.196c-.102-.488-.154-1.116-.154-1.884v-7.49h-1.852v-.443h1.852V1.307a8.63 8.63 0 0 0 1.698-.155 5.548 5.548 0 0 0 1.477-.554ZM91.88 3.922c1.293 0 2.307.385 3.042 1.153.735.768 1.103 2.024 1.103 3.767H88.77l-.044-.421h4.52c.014-.724-.03-1.389-.133-1.994-.103-.62-.264-1.116-.485-1.485-.22-.37-.514-.554-.882-.554-.514 0-.955.325-1.323.975-.352.65-.566 1.728-.64 3.235l.067.133c-.015.178-.03.362-.044.554v.599c0 1.019.14 1.846.419 2.482.294.635.661 1.1 1.102 1.396.441.28.89.42 1.345.42.309 0 .625-.043.948-.132a3.36 3.36 0 0 0 1.015-.532c.338-.266.654-.635.948-1.108l.397.133a5.779 5.779 0 0 1-.838 1.64 4.601 4.601 0 0 1-1.455 1.307c-.588.34-1.294.51-2.117.51-1 0-1.882-.214-2.646-.643-.764-.428-1.367-1.078-1.808-1.95-.426-.871-.64-1.98-.64-3.324 0-1.374.228-2.519.684-3.435.47-.916 1.11-1.595 1.918-2.039.824-.458 1.757-.687 2.8-.687ZM104.316 3.922c.471 0 .853.104 1.147.31.294.193.507.444.639.754.147.31.221.635.221.975 0 .547-.162.997-.485 1.352-.309.34-.721.51-1.235.51-.515 0-.919-.126-1.213-.377-.279-.266-.419-.613-.419-1.042 0-.413.088-.753.265-1.019.191-.28.426-.517.705-.71a.981.981 0 0 0-.617.023 1.744 1.744 0 0 0-.794.355c-.25.177-.463.406-.639.687a3.493 3.493 0 0 0-.419.886c-.103.31-.154.613-.154.909v5.872c0 .71.169 1.19.507 1.44.352.252.874.377 1.565.377v.466c-.338-.015-.83-.03-1.477-.045a44.585 44.585 0 0 0-2.029-.044c-.588 0-1.183.015-1.786.044-.602.015-1.058.03-1.367.045v-.466c.515 0 .875-.11 1.08-.332.221-.222.331-.643.331-1.263v-6.98c0-.666-.102-1.153-.308-1.463-.191-.325-.559-.488-1.103-.488v-.465c.47.044.926.066 1.367.066.618 0 1.191-.022 1.72-.066.544-.06 1.044-.14 1.5-.244v2.06a4.04 4.04 0 0 1 .705-1.085 3.141 3.141 0 0 1 1.014-.753 2.809 2.809 0 0 1 1.279-.289Z" fill="#F4F0E8"></path></svg><div class="bg-ebgray-50/10 flex h-8 w-fit shrink-0 items-center justify-start gap-2 rounded-full pr-4"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" class=" shrink-0 rounded-full shadow-md"><circle cx="16" cy="16" r="15.3333" fill="url(#gradient-eba6f6ab-e78f-4e02-8e2b-23ac2ac2df89)" stroke="white" stroke-width="1.33333"></circle><circle cx="16" cy="16" r="10.6667" fill="white"></circle><path fill-rule="evenodd" clip-rule="evenodd" d="M20.4434 9.61408C20.372 9.25702 20.0585 9 19.6944 9C19.3303 9 19.0167 9.25702 18.9453 9.61408L18.7631 10.5251C18.7027 10.8275 18.4663 11.0638 18.1639 11.1243L17.2529 11.3065C16.8959 11.3779 16.6388 11.6914 16.6388 12.0556C16.6388 12.4197 16.8959 12.7332 17.2529 12.8046L18.1639 12.9868C18.4663 13.0473 18.7027 13.2837 18.7631 13.5861L18.9453 14.497C19.0167 14.8541 19.3303 15.1111 19.6944 15.1111C20.0585 15.1111 20.372 14.8541 20.4434 14.497L20.6256 13.5861C20.6861 13.2837 20.9225 13.0473 21.2249 12.9868L22.136 12.8046C22.493 12.7332 22.7499 12.4197 22.7499 12.0556C22.7499 11.6914 22.493 11.3779 22.136 11.3065L21.2249 11.1243C20.9225 11.0638 20.6861 10.8275 20.6256 10.5251L20.4434 9.61408ZM13.5441 12.5779C13.4401 12.266 13.1483 12.0556 12.8195 12.0556C12.4907 12.0556 12.1987 12.266 12.0947 12.5779L11.5725 14.1449C11.4964 14.373 11.3175 14.552 11.0894 14.628L9.52232 15.1503C9.21039 15.2543 9 15.5462 9 15.875C9 16.2038 9.21039 16.4957 9.52232 16.5997L11.0894 17.122C11.3175 17.198 11.4964 17.377 11.5725 17.6051L12.0947 19.1721C12.1987 19.484 12.4907 19.6944 12.8195 19.6944C13.1483 19.6944 13.4401 19.484 13.5441 19.1721L14.0665 17.6051C14.1425 17.377 14.3214 17.198 14.5495 17.122L16.1166 16.5997C16.4285 16.4957 16.6388 16.2038 16.6388 15.875C16.6388 15.5462 16.4285 15.2543 16.1166 15.1503L14.5495 14.628C14.3214 14.552 14.1425 14.373 14.0665 14.1449L13.5441 12.5779ZM18.1666 18.1667C18.4954 18.1667 18.7873 18.3771 18.8913 18.689L19.0317 19.1101C19.1077 19.3382 19.2867 19.5172 19.5148 19.5933L19.936 19.7336C20.2479 19.8376 20.4583 20.1295 20.4583 20.4583C20.4583 20.7871 20.2479 21.079 19.936 21.183L19.5148 21.3234C19.2867 21.3994 19.1077 21.5784 19.0317 21.8065L18.8913 22.2277C18.7873 22.5396 18.4954 22.75 18.1666 22.75C17.8378 22.75 17.5459 22.5396 17.4419 22.2277L17.3015 21.8065C17.2255 21.5784 17.0465 21.3994 16.8184 21.3234L16.3973 21.183C16.0853 21.079 15.875 20.7871 15.875 20.4583C15.875 20.1295 16.0853 19.8376 16.3973 19.7336L16.8184 19.5933C17.0465 19.5172 17.2255 19.3382 17.3015 19.1101L17.4419 18.689C17.5459 18.3771 17.8378 18.1667 18.1666 18.1667Z" fill="url(#gradient-eba6f6ab-e78f-4e02-8e2b-23ac2ac2df89)"></path><defs><lineargradient id="gradient-eba6f6ab-e78f-4e02-8e2b-23ac2ac2df89" x1="6.52956" y1="4.576" x2="20.7892" y2="27.5453" gradientUnits="userSpaceOnUse"><stop stop-color="#AD7EE1"></stop><stop offset="0.376174" stop-color="#636FCB"></stop><stop offset="1" stop-color="#087279"></stop></lineargradient></defs></svg><p class="text-ebgray-600 text-xs gap-x-1 font-medium !text-white">Autofill</p></div></div><div class="flex items-center gap-3"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" type="button" class="size-6 shrink-0 cursor-pointer text-white"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"></path></svg></div></div><div class="overflow-auto overscroll-contain bg-white max-h-[calc(100vh-10rem)]" style="width: 336px;"></div></div><div id="dialog-portal-root"></div>;<div id="dialog-portal-root"></div></div></div></template></plasmo-csui><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
