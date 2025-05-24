@@ -13,3 +13,10 @@
 - Added cloud services (auth, storage, multiplayer, analytics)
 - Implemented offline fallbacks for all cloud services
 - Created comprehensive documentation for cloud integration
+
+## Fri May 23 19:39:51 EDT 2025
+
+- Added Photon Racer game with proper styling and thumbnail
+- Added Tic-Tac-Toe game with proper styling and thumbnail
+- Updated game list in configuration
+- Pushed changes to GitHub repository

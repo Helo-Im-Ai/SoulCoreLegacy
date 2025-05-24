@@ -66,6 +66,13 @@ GAME_LIST = [
         "implemented": True
     },
     {
+        "id": "nft_artisan",
+        "name": "NFT Artisan",
+        "description": "Create unique digital art pieces",
+        "thumbnail": "nft_artisan/assets/thumbnail.png",
+        "implemented": True
+    },
+    {
         "id": "breakout",
         "name": "Breakout",
         "description": "Break bricks with a bouncing ball",
