@@ -36,7 +36,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "36",
             "bold": "1",
             "italic": "0"
@@ -57,7 +57,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "18"
         }
     },
@@ -70,7 +70,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "14"
         }
     },
@@ -250,7 +250,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "18",
             "bold": "1",
             "italic": "0"
@@ -272,7 +272,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "18",
             "bold": "1",
             "italic": "0"
@@ -294,7 +294,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "18",
             "bold": "1",
             "italic": "0"
@@ -316,7 +316,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "18",
             "bold": "1",
             "italic": "0"
@@ -338,7 +338,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "18",
             "bold": "1",
             "italic": "0"
@@ -360,7 +360,7 @@
         },
         "font":
         {
-            "name": "fira_code",
+            "name": "arial",
             "size": "18",
             "bold": "1",
             "italic": "0"
