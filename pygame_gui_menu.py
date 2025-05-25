@@ -761,13 +761,9 @@ class ProfessionalMenu:
                 self.scrollbar.scroll_position = max(0.0, min(1.0, self.scrollbar.scroll_position + scroll_amount))
                 self.update_card_positions()
             
-            # Check for scrollbar movement
-            if hasattr(pygame_gui, 'UI_VERTICAL_SCROLL_BAR_MOVED'):
-                if event.type == pygame_gui.UI_VERTICAL_SCROLL_BAR_MOVED and event.ui_element == self.scrollbar:
-                    self.update_card_positions()
-            elif hasattr(pygame_gui.UI_ELEMENT_TYPES, 'UIScrollingContainer'):
-                # Alternative check for newer pygame_gui versions
-                if event.type == pygame.USEREVENT and hasattr(event, 'user_type') and event.user_type == pygame_gui.UI_ELEMENT_TYPES.UIScrollingContainer.vertical_scroll_bar_moved and event.ui_element == self.scrollbar:
+            # Check for scrollbar movement using a more generic approach
+            if event.type == pygame.USEREVENT:
+                if hasattr(event, 'ui_element') and event.ui_element == self.scrollbar:
                     self.update_card_positions()
     
     def update_card_positions(self):
