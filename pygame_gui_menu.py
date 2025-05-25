@@ -369,7 +369,7 @@ class GameCard:
                 self.thumbnail = pygame.image.load(thumbnail_path)
                 
                 # Create thumbnail image element
-                thumbnail_rect = pygame.Rect(10, 10, rect.width - 20, 100)
+                thumbnail_rect = pygame.Rect(10, 10, rect.width - 20, 80)  # Reduced height
                 
                 # Scale the thumbnail to fit
                 scaled_thumbnail = pygame.transform.scale(self.thumbnail, (thumbnail_rect.width, thumbnail_rect.height))
@@ -384,7 +384,7 @@ class GameCard:
                 )
                 
                 # Adjust layout for thumbnail
-                title_y = 120
+                title_y = 95  # Adjusted position
             except Exception as e:
                 print(f"Error loading thumbnail for {game_info['id']}: {e}")
                 title_y = 10
@@ -392,7 +392,7 @@ class GameCard:
             title_y = 10
         
         # Create the title
-        title_rect = pygame.Rect(0, title_y, rect.width - 20, 30)
+        title_rect = pygame.Rect(0, title_y, rect.width - 20, 25)  # Reduced height
         self.title = pygame_gui.elements.UILabel(
             relative_rect=title_rect,
             text=game_info['name'],
@@ -402,7 +402,7 @@ class GameCard:
         )
         
         # Create the description
-        desc_rect = pygame.Rect(10, title_y + 40, rect.width - 20, 60)
+        desc_rect = pygame.Rect(10, title_y + 30, rect.width - 20, 50)  # Reduced height
         self.description = pygame_gui.elements.UITextBox(
             html_text=game_info['description'],
             relative_rect=desc_rect,
@@ -412,7 +412,7 @@ class GameCard:
         )
         
         # Create the play button
-        button_rect = pygame.Rect((rect.width - 100) // 2, rect.height - 50, 100, 30)
+        button_rect = pygame.Rect((rect.width - 100) // 2, rect.height - 40, 100, 30)
         self.play_button = pygame_gui.elements.UIButton(
             relative_rect=button_rect,
             text="PLAY",
@@ -454,28 +454,28 @@ class GameCard:
         star_count = min(5, max(0, popularity // 2))  # 0-10 scale to 0-5 stars
         
         for i in range(5):
-            star_rect = pygame.Rect(10 + i * 20, rect.height - 80, 15, 15)
+            star_rect = pygame.Rect(10 + i * 15, rect.height - 60, 10, 10)  # Smaller stars, adjusted position
             star_filled = i < star_count
             star = pygame_gui.elements.UIImage(
                 relative_rect=star_rect,
-                image_surface=self._create_star_image(filled=star_filled),
+                image_surface=self._create_star_image(filled=star_filled, size=10),  # Smaller stars
                 manager=ui_manager,
                 container=self.panel,
                 object_id="#star_filled" if star_filled else "#star_empty"
             )
             self.stars.append(star)
     
-    def _create_star_image(self, filled: bool = True) -> pygame.Surface:
+    def _create_star_image(self, filled: bool = True, size: int = 15) -> pygame.Surface:
         """
         Create a star image.
         
         Args:
             filled: Whether the star is filled
+            size: Size of the star image
             
         Returns:
             Star image surface
         """
-        size = 15
         surface = pygame.Surface((size, size), pygame.SRCALPHA)
         
         if filled:
@@ -579,6 +579,10 @@ class ProfessionalMenu:
         # Game cards
         self.game_cards = []
         self._create_game_cards()
+        
+        # Add scrollbar for vertical scrolling if needed
+        self.scrollbar = None
+        self._setup_scrolling()
     
     def _create_ui_elements(self):
         """Create the UI elements."""
@@ -632,14 +636,14 @@ class ProfessionalMenu:
         
         # Calculate card layout
         card_width = 300
-        card_height = 300  # Increased height to accommodate thumbnails
+        card_height = 250  # Reduced height to fit screen better
         cards_per_row = 3
         horizontal_spacing = 30
-        vertical_spacing = 30
+        vertical_spacing = 20  # Reduced vertical spacing
         
         # Calculate starting position
         start_x = (self.screen_width - (cards_per_row * card_width + (cards_per_row - 1) * horizontal_spacing)) // 2
-        start_y = 150
+        start_y = 130  # Moved up slightly
         
         # Create a card for each game
         for i, game in enumerate(GAME_LIST):
@@ -669,6 +673,111 @@ class ProfessionalMenu:
         """
         print(f"Game selected: {game_id}")
     
+    def handle_event(self, event):
+        """
+        Handle pygame events.
+        
+        Args:
+            event: The event to handle
+        """
+        # Handle scrolling
+        self._handle_scrolling(event)
+        
+        # Process UI events
+        self.ui_manager.process_events(event)
+        
+        # Process game card events
+        for card in self.game_cards:
+            card.process_event(event)
+        
+        # Handle button events
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.quit_button:
+                return False  # Signal to quit
+            elif event.ui_element == self.settings_button:
+                print("Settings button pressed")
+        
+        return True  # Continue running
+
+if __name__ == "__main__":
+    menu = ProfessionalMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu.run()
+    def _setup_scrolling(self):
+        """Set up scrolling for the game cards if needed."""
+        # Calculate total height needed
+        if len(self.game_cards) > 0:
+            last_card = self.game_cards[-1]
+            total_content_height = last_card.rect.bottom + 50  # Add some padding
+            
+            # If content exceeds screen height, add scrollbar
+            if total_content_height > self.screen_height:
+                self.scrollbar = pygame_gui.elements.UIVerticalScrollBar(
+                    relative_rect=pygame.Rect(self.screen_width - 20, 120, 20, self.screen_height - 160),
+                    visible_percentage=(self.screen_height - 160) / total_content_height,
+                    manager=self.ui_manager
+                )
+    
+    def _handle_scrolling(self, event):
+        """Handle scrolling events."""
+        if self.scrollbar:
+            # Check for mouse wheel events
+            if event.type == pygame.MOUSEWHEEL:
+                scroll_amount = event.y * -0.1  # Adjust scroll speed
+                self.scrollbar.scroll_position = max(0.0, min(1.0, self.scrollbar.scroll_position + scroll_amount))
+                self._update_card_positions()
+            
+            # Check for scrollbar movement
+            if event.type == pygame_gui.UI_VERTICAL_SCROLL_BAR_MOVED and event.ui_element == self.scrollbar:
+                self._update_card_positions()
+    
+    def _update_card_positions(self):
+        """Update card positions based on scroll position."""
+        if not self.scrollbar or not self.game_cards:
+            return
+            
+        # Calculate total height needed
+        last_card = self.game_cards[-1]
+        total_content_height = last_card.rect.bottom + 50
+        
+        # Calculate scroll offset
+        scroll_height = total_content_height - (self.screen_height - 160)
+        scroll_offset = int(self.scrollbar.scroll_position * scroll_height)
+        
+        # Apply offset to all cards
+        for card in self.game_cards:
+            # Get the original y position (without scrolling)
+            original_y = card.rect.y
+            
+            # Apply scroll offset
+            card.panel.set_position((card.rect.x, original_y - scroll_offset))
+    def update(self, time_delta: float):
+        """
+        Update the menu state.
+        
+        Args:
+            time_delta: Time since last update
+        """
+        # Update background effects
+        self.grid_background.update(time_delta)
+        self.particle_system.update(time_delta)
+        
+        # Update UI
+        self.ui_manager.update(time_delta)
+    
+    def draw(self, surface: pygame.Surface):
+        """
+        Draw the menu.
+        
+        Args:
+            surface: Surface to draw on
+        """
+        # Draw background effects
+        self.grid_background.draw(surface)
+        self.particle_system.draw(surface)
+        
+        # Draw UI
+        self.ui_manager.draw_ui(surface)
+    
     def run(self):
         """Run the menu loop."""
         running = True
@@ -682,36 +791,18 @@ class ProfessionalMenu:
                 if event.type == pygame.QUIT:
                     running = False
                 
-                # Process UI events
-                self.ui_manager.process_events(event)
-                
-                # Process game card events
-                for card in self.game_cards:
-                    card.process_event(event)
-                
-                # Handle button events
-                if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == self.quit_button:
-                        running = False
-                    elif event.ui_element == self.settings_button:
-                        print("Settings button pressed")
+                # Handle events
+                if not self.handle_event(event):
+                    running = False
             
             # Update
-            self.grid_background.update(time_delta)
-            self.particle_system.update(time_delta)
-            self.ui_manager.update(time_delta)
+            self.update(time_delta)
             
             # Draw
-            self.grid_background.draw(self.screen)
-            self.particle_system.draw(self.screen)
-            self.ui_manager.draw_ui(self.screen)
+            self.draw(self.screen)
             
             # Update display
             pygame.display.update()
         
         # Clean up
         pygame.quit()
-
-if __name__ == "__main__":
-    menu = ProfessionalMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu.run()
