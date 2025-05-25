@@ -28,7 +28,8 @@ GAME_LIST = [
         "popularity": 8,
         "new_release": False,
         "featured": True,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "cosmic_racer.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cosmic_racer.png"),
+        "category": "Racing"
     },
     {
         "id": "dungeon_delver",
@@ -38,7 +39,8 @@ GAME_LIST = [
         "popularity": 6,
         "new_release": True,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "dungeon_delver.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "dungeon_delver.png"),
+        "category": "Adventure"
     },
     {
         "id": "nft_artisan",
@@ -48,7 +50,8 @@ GAME_LIST = [
         "popularity": 7,
         "new_release": False,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "nft_artisan.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "nft_artisan.png"),
+        "category": "Creative"
     },
     {
         "id": "snake",
@@ -58,7 +61,8 @@ GAME_LIST = [
         "popularity": 5,
         "new_release": False,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "snake.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "snake.png"),
+        "category": "Arcade"
     },
     {
         "id": "pong",
@@ -68,7 +72,8 @@ GAME_LIST = [
         "popularity": 4,
         "new_release": False,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "pong.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "pong.png"),
+        "category": "Sports"
     },
     {
         "id": "asteroids",
@@ -78,7 +83,8 @@ GAME_LIST = [
         "popularity": 7,
         "new_release": True,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "asteroids.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "asteroids.png"),
+        "category": "Arcade"
     },
     {
         "id": "cyber_defense",
@@ -88,7 +94,8 @@ GAME_LIST = [
         "popularity": 9,
         "new_release": True,
         "featured": True,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_defense.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_defense.png"),
+        "category": "Strategy"
     },
     {
         "id": "quantum_puzzler",
@@ -98,7 +105,8 @@ GAME_LIST = [
         "popularity": 7,
         "new_release": True,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "quantum_puzzler.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "quantum_puzzler.png"),
+        "category": "Puzzle"
     },
     {
         "id": "rhythm_master",
@@ -108,7 +116,8 @@ GAME_LIST = [
         "popularity": 8,
         "new_release": False,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "rhythm_master.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "rhythm_master.png"),
+        "category": "Music"
     },
     {
         "id": "mech_commander",
@@ -118,7 +127,8 @@ GAME_LIST = [
         "popularity": 6,
         "new_release": False,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "mech_commander.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "mech_commander.png"),
+        "category": "Strategy"
     },
     {
         "id": "crypto_tycoon",
@@ -128,7 +138,8 @@ GAME_LIST = [
         "popularity": 8,
         "new_release": True,
         "featured": False,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "crypto_tycoon.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "crypto_tycoon.png"),
+        "category": "Simulation"
     },
     {
         "id": "vr_explorer",
@@ -138,7 +149,74 @@ GAME_LIST = [
         "popularity": 9,
         "new_release": True,
         "featured": True,
-        "thumbnail": os.path.join(THUMBNAIL_PATH, "vr_explorer.png")
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "vr_explorer.png"),
+        "category": "Adventure"
+    },
+    {
+        "id": "cyber_soccer",
+        "name": "Cyber Soccer",
+        "description": "Play futuristic soccer with enhanced abilities, power-ups, and dynamic playing fields.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_soccer.png"),
+        "category": "Sports"
+    },
+    {
+        "id": "extreme_racing",
+        "name": "Extreme Racing",
+        "description": "Race on impossible tracks with gravity-defying vehicles and strategic power-ups.",
+        "implemented": True,
+        "popularity": 9,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "extreme_racing.png"),
+        "category": "Sports"
+    },
+    {
+        "id": "space_basketball",
+        "name": "Space Basketball",
+        "description": "Play basketball in zero gravity with unique physics and special abilities.",
+        "implemented": True,
+        "popularity": 7,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "space_basketball.png"),
+        "category": "Sports"
+    },
+    {
+        "id": "virtual_tennis",
+        "name": "Virtual Tennis",
+        "description": "Experience tennis with dynamic courts, power shots, and customizable players.",
+        "implemented": True,
+        "popularity": 6,
+        "new_release": False,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "virtual_tennis.png"),
+        "category": "Sports"
+    },
+    {
+        "id": "mech_boxing",
+        "name": "Mech Boxing",
+        "description": "Control giant robots in intense boxing matches with upgradeable parts and special moves.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "mech_boxing.png"),
+        "category": "Sports"
+    },
+    {
+        "id": "cyber_surfing",
+        "name": "Cyber Surfing",
+        "description": "Surf on digital waves in a neon cyberspace with tricks, combos, and obstacles.",
+        "implemented": True,
+        "popularity": 7,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_surfing.png"),
+        "category": "Sports"
     }
 ]
 
