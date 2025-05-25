@@ -283,6 +283,72 @@ GAME_LIST = [
         "featured": True,
         "thumbnail": os.path.join(THUMBNAIL_PATH, "ai_soul_society.png"),
         "category": "Simulation"
+    },
+    {
+        "id": "pixel_quest",
+        "name": "Pixel Quest",
+        "description": "Embark on a retro-style RPG adventure with turn-based combat and pixel art graphics.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": False,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "pixel_quest.png"),
+        "category": "RPG"
+    },
+    {
+        "id": "cyber_knights",
+        "name": "Cyber Knights",
+        "description": "Lead a team of cybernetically enhanced knights in a dystopian future RPG.",
+        "implemented": True,
+        "popularity": 7,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_knights.png"),
+        "category": "RPG"
+    },
+    {
+        "id": "dragon_realm",
+        "name": "Dragon Realm",
+        "description": "Explore a vast fantasy world filled with dragons, magic, and epic quests.",
+        "implemented": True,
+        "popularity": 9,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "dragon_realm.png"),
+        "category": "RPG"
+    },
+    {
+        "id": "space_commander",
+        "name": "Space Commander",
+        "description": "Command a fleet of starships in strategic space battles across the galaxy.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": False,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "space_commander.png"),
+        "category": "Strategy"
+    },
+    {
+        "id": "quantum_tactics",
+        "name": "Quantum Tactics",
+        "description": "Deploy tactical units in turn-based combat with quantum mechanics altering the battlefield.",
+        "implemented": True,
+        "popularity": 7,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "quantum_tactics.png"),
+        "category": "Strategy"
+    },
+    {
+        "id": "civilization_nexus",
+        "name": "Civilization Nexus",
+        "description": "Build, expand, and conquer in this 4X strategy game spanning multiple eras of development.",
+        "implemented": True,
+        "popularity": 9,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "civilization_nexus.png"),
+        "category": "Strategy"
     }
 ]
 
