@@ -217,6 +217,72 @@ GAME_LIST = [
         "featured": False,
         "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_surfing.png"),
         "category": "Sports"
+    },
+    {
+        "id": "quantum_leap",
+        "name": "Quantum Leap",
+        "description": "Navigate through dangerous roads and rivers while manipulating quantum physics to teleport.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "quantum_leap.png"),
+        "category": "Arcade"
+    },
+    {
+        "id": "neon_blocks",
+        "name": "Neon Blocks",
+        "description": "Arrange falling neon blocks to create complete lines in this addictive puzzle game.",
+        "implemented": True,
+        "popularity": 9,
+        "new_release": False,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "neon_blocks.png"),
+        "category": "Puzzle"
+    },
+    {
+        "id": "cyber_spades",
+        "name": "Cyber Spades",
+        "description": "Play the classic card game Spades with futuristic twists and special card abilities.",
+        "implemented": True,
+        "popularity": 6,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_spades.png"),
+        "category": "Card"
+    },
+    {
+        "id": "neo_blackjack",
+        "name": "Neo Blackjack",
+        "description": "Test your luck and strategy in this enhanced version of Blackjack with special powers.",
+        "implemented": True,
+        "popularity": 7,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "neo_blackjack.png"),
+        "category": "Card"
+    },
+    {
+        "id": "quantum_solitaire",
+        "name": "Quantum Solitaire",
+        "description": "Play solitaire where cards exist in multiple states until observed, adding strategic depth.",
+        "implemented": True,
+        "popularity": 5,
+        "new_release": False,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "quantum_solitaire.png"),
+        "category": "Card"
+    },
+    {
+        "id": "ai_soul_society",
+        "name": "AI Soul Society",
+        "description": "Create, nurture, and evolve digital AI beings in a virtual society with emergent behaviors.",
+        "implemented": True,
+        "popularity": 10,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "ai_soul_society.png"),
+        "category": "Simulation"
     }
 ]
 
