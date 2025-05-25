@@ -542,6 +542,10 @@ class GameCard:
         self.play_button.kill()
         self.description.kill()
         self.title.kill()
+        
+        if hasattr(self, 'thumbnail_element'):
+            self.thumbnail_element.kill()
+            
         self.panel.kill()
 
 class ProfessionalMenu:
@@ -582,7 +586,7 @@ class ProfessionalMenu:
         
         # Add scrollbar for vertical scrolling if needed
         self.scrollbar = None
-        self._setup_scrolling()
+        self.setup_scrolling()
     
     def _create_ui_elements(self):
         """Create the UI elements."""
@@ -673,36 +677,7 @@ class ProfessionalMenu:
         """
         print(f"Game selected: {game_id}")
     
-    def handle_event(self, event):
-        """
-        Handle pygame events.
-        
-        Args:
-            event: The event to handle
-        """
-        # Handle scrolling
-        self._handle_scrolling(event)
-        
-        # Process UI events
-        self.ui_manager.process_events(event)
-        
-        # Process game card events
-        for card in self.game_cards:
-            card.process_event(event)
-        
-        # Handle button events
-        if event.type == pygame_gui.UI_BUTTON_PRESSED:
-            if event.ui_element == self.quit_button:
-                return False  # Signal to quit
-            elif event.ui_element == self.settings_button:
-                print("Settings button pressed")
-        
-        return True  # Continue running
-
-if __name__ == "__main__":
-    menu = ProfessionalMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
-    menu.run()
-    def _setup_scrolling(self):
+    def setup_scrolling(self):
         """Set up scrolling for the game cards if needed."""
         # Calculate total height needed
         if len(self.game_cards) > 0:
@@ -717,22 +692,22 @@ if __name__ == "__main__":
                     manager=self.ui_manager
                 )
     
-    def _handle_scrolling(self, event):
+    def handle_scrolling(self, event):
         """Handle scrolling events."""
-        if self.scrollbar:
+        if hasattr(self, 'scrollbar') and self.scrollbar:
             # Check for mouse wheel events
             if event.type == pygame.MOUSEWHEEL:
                 scroll_amount = event.y * -0.1  # Adjust scroll speed
                 self.scrollbar.scroll_position = max(0.0, min(1.0, self.scrollbar.scroll_position + scroll_amount))
-                self._update_card_positions()
+                self.update_card_positions()
             
             # Check for scrollbar movement
             if event.type == pygame_gui.UI_VERTICAL_SCROLL_BAR_MOVED and event.ui_element == self.scrollbar:
-                self._update_card_positions()
+                self.update_card_positions()
     
-    def _update_card_positions(self):
+    def update_card_positions(self):
         """Update card positions based on scroll position."""
-        if not self.scrollbar or not self.game_cards:
+        if not hasattr(self, 'scrollbar') or not self.scrollbar or not self.game_cards:
             return
             
         # Calculate total height needed
@@ -750,6 +725,33 @@ if __name__ == "__main__":
             
             # Apply scroll offset
             card.panel.set_position((card.rect.x, original_y - scroll_offset))
+    
+    def handle_event(self, event):
+        """
+        Handle pygame events.
+        
+        Args:
+            event: The event to handle
+        """
+        # Handle scrolling
+        self.handle_scrolling(event)
+        
+        # Process UI events
+        self.ui_manager.process_events(event)
+        
+        # Process game card events
+        for card in self.game_cards:
+            card.process_event(event)
+        
+        # Handle button events
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.quit_button:
+                return False  # Signal to quit
+            elif event.ui_element == self.settings_button:
+                print("Settings button pressed")
+        
+        return True  # Continue running
+    
     def update(self, time_delta: float):
         """
         Update the menu state.
@@ -806,3 +808,7 @@ if __name__ == "__main__":
         
         # Clean up
         pygame.quit()
+
+if __name__ == "__main__":
+    menu = ProfessionalMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+    menu.run()
