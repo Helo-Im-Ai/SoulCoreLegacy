@@ -18,7 +18,7 @@ BACKGROUND_COLOR = (10, 5, 30)  # Deep space black with hint of purple
 # Define paths
 THUMBNAIL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "thumbnails")
 
-# Mock game list for testing
+# Game list for the arcade
 GAME_LIST = [
     {
         "id": "cosmic_racer",
@@ -79,6 +79,66 @@ GAME_LIST = [
         "new_release": True,
         "featured": False,
         "thumbnail": os.path.join(THUMBNAIL_PATH, "asteroids.png")
+    },
+    {
+        "id": "cyber_defense",
+        "name": "Cyber Defense",
+        "description": "Protect your network from incoming cyber attacks in this strategic tower defense game.",
+        "implemented": True,
+        "popularity": 9,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "cyber_defense.png")
+    },
+    {
+        "id": "quantum_puzzler",
+        "name": "Quantum Puzzler",
+        "description": "Solve mind-bending puzzles using quantum mechanics principles and parallel realities.",
+        "implemented": True,
+        "popularity": 7,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "quantum_puzzler.png")
+    },
+    {
+        "id": "rhythm_master",
+        "name": "Rhythm Master",
+        "description": "Test your rhythm and timing in this music-based game with increasing difficulty levels.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": False,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "rhythm_master.png")
+    },
+    {
+        "id": "mech_commander",
+        "name": "Mech Commander",
+        "description": "Command a squad of customizable mechs in tactical turn-based combat scenarios.",
+        "implemented": True,
+        "popularity": 6,
+        "new_release": False,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "mech_commander.png")
+    },
+    {
+        "id": "crypto_tycoon",
+        "name": "Crypto Tycoon",
+        "description": "Build your crypto empire by trading, mining, and investing in this economic simulation.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "crypto_tycoon.png")
+    },
+    {
+        "id": "vr_explorer",
+        "name": "VR Explorer",
+        "description": "Explore stunning virtual worlds and solve environmental puzzles in this immersive adventure.",
+        "implemented": True,
+        "popularity": 9,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "vr_explorer.png")
     }
 ]
 
