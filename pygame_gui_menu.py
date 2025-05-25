@@ -349,6 +349,61 @@ GAME_LIST = [
         "featured": True,
         "thumbnail": os.path.join(THUMBNAIL_PATH, "civilization_nexus.png"),
         "category": "Strategy"
+    },
+    {
+        "id": "quantum_chess",
+        "name": "Quantum Chess",
+        "description": "Play chess with a timer where pieces can exist in quantum superposition until observed.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "quantum_chess.png"),
+        "category": "Chess"
+    },
+    {
+        "id": "zen_chess",
+        "name": "Zen Chess",
+        "description": "Experience a meditative approach to chess with no time pressure and beautiful aesthetics.",
+        "implemented": True,
+        "popularity": 6,
+        "new_release": False,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "zen_chess.png"),
+        "category": "Chess"
+    },
+    {
+        "id": "team_chess_arena",
+        "name": "Team Chess Arena",
+        "description": "Compete in 2v2 team chess matches where coordination and strategy are key to victory.",
+        "implemented": True,
+        "popularity": 7,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "team_chess_arena.png"),
+        "category": "Chess"
+    },
+    {
+        "id": "ai_chess_partner",
+        "name": "AI Chess Partner",
+        "description": "Play chess with an AI partner that suggests moves and helps you develop winning strategies.",
+        "implemented": True,
+        "popularity": 9,
+        "new_release": True,
+        "featured": True,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "ai_chess_partner.png"),
+        "category": "Chess"
+    },
+    {
+        "id": "ai_chess_mentor",
+        "name": "AI Chess Mentor",
+        "description": "Learn chess from an AI mentor that guides your moves but lets you make the final decisions.",
+        "implemented": True,
+        "popularity": 8,
+        "new_release": True,
+        "featured": False,
+        "thumbnail": os.path.join(THUMBNAIL_PATH, "ai_chess_mentor.png"),
+        "category": "Chess"
     }
 ]
 
